@@ -18,9 +18,9 @@ namespace AcessibilidadeWebAPI.Controllers
         }
 
         [HttpPost("TestePost")]
-        public async Task TestePost(TesteDto aaaaaaaaaaaaaaa)
+        public async Task TestePost(TesteDto latLngFromEsp)
         {
-            _logger.LogInformation("TestePost called with: {lat}, {lng}", aaaaaaaaaaaaaaa.lat, aaaaaaaaaaaaaaa.lng);
+            _logger.LogInformation("TestePost called with: {lat}, {lng}", latLngFromEsp.lat, latLngFromEsp.lng);
             _logger.LogInformation("Sending ACK to device via MQTT...");    
             await mqttPush.EnviarAckParaDispositivoAsync();
             _logger.LogInformation("ACK sent successfully.");
