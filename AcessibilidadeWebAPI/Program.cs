@@ -1,4 +1,11 @@
 
+using AcessibilidadeWebAPI.BancoDados;
+using AcessibilidadeWebAPI.Repositorios.Usuarios;
+using MediatR;
+using Microsoft.Azure.Devices;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+
 namespace AcessibilidadeWebAPI
 {
     public class Program
@@ -16,6 +23,27 @@ namespace AcessibilidadeWebAPI
 
             builder.Services.AddScoped<AzureMqttPushService>();
 
+            builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+
+            string connectionString = builder.Configuration.GetSection("ConnectionStringOptions")["ConnectionString"];
+            builder.Services.AddDbContext<AcessibilidadeDbContext>(options =>
+            {
+                options.UseLazyLoadingProxies()
+                    .UseSqlServer(connectionString, sqlServerOptions =>
+                    {
+                        int timououtEmSegundos = 60 * 6;
+                        sqlServerOptions.CommandTimeout(timououtEmSegundos);
+                    });
+            }, ServiceLifetime.Scoped, ServiceLifetime.Scoped);
+
+            builder.Services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            });
+            var entryAssembly = Assembly.Load("AcessibilidadeWebAPI");
+            Assembly[] assemblies = (new[] { entryAssembly, Assembly.GetExecutingAssembly() }).Distinct().ToArray();
+            builder.Services.AddAutoMapper(assemblies);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,12 +55,14 @@ namespace AcessibilidadeWebAPI
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
 
             app.MapControllers();
 
             app.Run();
+
+
         }
     }
 }
