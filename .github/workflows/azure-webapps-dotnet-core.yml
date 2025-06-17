@@ -79,6 +79,11 @@ jobs:
         with:
           name: .net-app
 
+      - name: Extract artifact to ./published
+        run: |
+          mkdir published
+          unzip .net-app.zip -d published
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
