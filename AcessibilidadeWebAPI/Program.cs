@@ -1,8 +1,6 @@
 
 using AcessibilidadeWebAPI.BancoDados;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
-using MediatR;
-using Microsoft.Azure.Devices;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -12,7 +10,7 @@ namespace AcessibilidadeWebAPI
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
 
@@ -40,18 +38,18 @@ namespace AcessibilidadeWebAPI
             {
                 config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
-            var entryAssembly = Assembly.Load("AcessibilidadeWebAPI");
+            Assembly entryAssembly = Assembly.Load("AcessibilidadeWebAPI");
             Assembly[] assemblies = (new[] { entryAssembly, Assembly.GetExecutingAssembly() }).Distinct().ToArray();
             builder.Services.AddAutoMapper(assemblies);
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            //}
 
             app.UseHttpsRedirection();
 
