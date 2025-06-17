@@ -2,6 +2,7 @@
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Resultados.Usuarios;
+using AutoMapper;
 using MediatR;
 using Microsoft.Azure.Amqp.Encoding;
 
@@ -20,14 +21,14 @@ namespace AcessibilidadeWebAPI.Executores.Usuarios
 
         public Task<ListarUsuarioResultado> Handle(ListarUsuarioRequisicao request, CancellationToken cancellationToken)
         {
-            var arrUsuarios = usuarioRepositorio.Listar();
+            IQueryable<Entidades.Usuario> arrUsuarios = usuarioRepositorio.Listar();
 
-            var arrUsuarioDto = mapper.ProjectTo<UsuarioDto>(arrUsuarios).ToArray();
+            UsuarioDto[] arrUsuarioDto = mapper.ProjectTo<UsuarioDto>(arrUsuarios).ToArray();
 
-            return new ListarUsuarioResultado()
+            return Task.FromResult(new ListarUsuarioResultado()
             {
                 ArrUsuario = arrUsuarioDto,
-            };
+            });
         }
     }
 }

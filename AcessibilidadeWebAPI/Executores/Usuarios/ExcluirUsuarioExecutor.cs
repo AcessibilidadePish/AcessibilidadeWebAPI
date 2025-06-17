@@ -15,11 +15,11 @@ namespace AcessibilidadeWebAPI.Executores.Usuarios
 
         public Task Handle(ExcluirUsuarioRequisicao request, CancellationToken cancellationToken)
         {
-            var usuario = usuarioRepositorio.ObterPorId(request.IdUsuario);
+            Entidades.Usuario usuario = usuarioRepositorio.ObterPorId(request.IdUsuario);
 
             usuarioRepositorio.Deletar(usuario);
 
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

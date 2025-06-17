@@ -1,6 +1,7 @@
 ﻿using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Resultados.Usuarios;
+using AutoMapper;
 using MediatR;
 
 namespace AcessibilidadeWebAPI.Executores.Usuarios
@@ -17,7 +18,7 @@ namespace AcessibilidadeWebAPI.Executores.Usuarios
         }
         public Task<EditarUsuarioResultado> Handle(EditarUsuarioRequisicao request, CancellationToken cancellationToken)
         {
-            var usuario = usuarioRepositorio.ObterPorId(request.IdUsuario);
+            Entidades.Usuario usuario = usuarioRepositorio.ObterPorId(request.IdUsuario);
 
             mapper.Map(request, usuario);
             usuarioRepositorio.Editar(usuario);

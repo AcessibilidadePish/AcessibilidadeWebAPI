@@ -3,6 +3,7 @@ using AcessibilidadeWebAPI.Entidades;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Resultados.Usuarios;
+using AutoMapper;
 using MediatR;
 
 namespace AcessibilidadeWebAPI.Executores.Usuarios

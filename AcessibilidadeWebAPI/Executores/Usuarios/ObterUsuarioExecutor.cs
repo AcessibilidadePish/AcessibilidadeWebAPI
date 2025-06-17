@@ -2,6 +2,7 @@
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Resultados.Usuarios;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
@@ -24,7 +25,7 @@ namespace AcessibilidadeWebAPI.Executores.Usuarios
 
             var usuarioDto = mapper.Map<UsuarioDto>(usuario);
 
-            return (new ObterUsuarioResultado()
+            return Task.FromResult(new ObterUsuarioResultado()
             {
                 Usuario = usuarioDto,
             });
