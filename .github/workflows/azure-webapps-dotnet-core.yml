@@ -19,11 +19,6 @@
 
 name: Build and deploy ASP.Net Core app to an Azure Web App
 
-env:
-  AZURE_WEBAPP_NAME: AS-AcessibilidadeWebAPI    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: './published'
-  DOTNET_VERSION: '8.0.x'  # ou a versão que você estiver usando de fato
-
 on:
   push:
     branches: [ "master" ]
@@ -33,56 +28,36 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # Checa o repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      # Instala o .NET SDK 8
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: '8.0.x'
 
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+      # Restaura os pacotes NuGet
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      # Compila o projeto
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ./published
+      # Publica a aplicação em uma pasta local
+      - name: Publish
+        run: dotnet publish -c Release -o published
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: ./published
-
-  deploy:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-
+      # Faz o deploy para o Azure App Service
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: nome-do-seu-appservice-aqui
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .net-app  # <- Nome da pasta criada automaticamente
+          package: ./published
