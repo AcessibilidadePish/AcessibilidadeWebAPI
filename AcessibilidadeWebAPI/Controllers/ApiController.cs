@@ -5,7 +5,7 @@ using System.Net.Mime;
 
 namespace AcessibilidadeWebAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]

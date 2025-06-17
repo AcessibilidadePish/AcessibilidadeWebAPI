@@ -5,6 +5,5 @@ namespace AcessibilidadeWebAPI.Requisicoes.Usuarios
 {
     public class ListarUsuarioRequisicao : IRequest<ListarUsuarioResultado>
     {
-        public int IdUsuario { get; set; }
     }
 }

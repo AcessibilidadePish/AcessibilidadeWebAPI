@@ -68,7 +68,6 @@ namespace AcessibilidadeWebAPI.Controllers
         {
             ListarUsuarioRequisicao requisicao = new ListarUsuarioRequisicao()
             {
-                IdUsuario = input.IdUsuario,
             };
 
             ListarUsuarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
@@ -96,8 +95,7 @@ namespace AcessibilidadeWebAPI.Controllers
         {
             InserirUsuarioRequisicao requisicao = new InserirUsuarioRequisicao()
             {
-                IdUsuario = input.IdUsuario,
-                ehDeficiente = input.ehDeficiente,
+                EhDeficiente = input.EhDeficiente,
                 Email = input.Email,
                 Nome = input.Nome,
                 Telefone = input.Telefone
@@ -129,7 +127,7 @@ namespace AcessibilidadeWebAPI.Controllers
             EditarUsuarioRequisicao requisicao = new EditarUsuarioRequisicao()
             {
                 IdUsuario = input.IdUsuario,
-                ehDeficiente = input.ehDeficiente,
+                EhDeficiente = input.EhDeficiente,
                 Email = input.Email,
                 Nome = input.Nome,
                 Telefone = input.Telefone
