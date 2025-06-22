@@ -4,7 +4,7 @@ using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Voluntario;
 using MediatR;
 
-namespace AcessibilidadeWebAPI.Executores.Voluntario
+namespace AcessibilidadeWebAPI.Executores.Voluntarios
 {
     public class ExcluirVoluntarioExecutor : IRequestHandler<ExcluirVoluntarioRequisicao>
     {

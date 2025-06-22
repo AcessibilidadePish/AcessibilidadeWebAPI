@@ -1,5 +1,6 @@
 ﻿using AcessibilidadeWebAPI.Models.Usuarios;
 using AcessibilidadeWebAPI.Models.Voluntarios;
+using AcessibilidadeWebAPI.Models.Voluntarios;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Voluntario;
 using AcessibilidadeWebAPI.Resultados.Usuarios;
@@ -14,7 +15,7 @@ namespace AcessibilidadeWebAPI.Controllers
         /// ObterVoluntario
         /// </summary>
         /// <remarks> ObterVoluntario </remarks>
-        /// <param name="IdUsuario"></param>
+        /// <param name="IdVoluntario"></param>
         /// <param name="cancellationToken"></param>
         [HttpGet("api/[controller]/ObterVoluntario")]
         [ProducesResponseType(typeof(ObterVoluntarioOutput), StatusCodes.Status200OK)]
@@ -22,7 +23,7 @@ namespace AcessibilidadeWebAPI.Controllers
         {
             ObterVoluntarioRequisicao requisicao = new ObterVoluntarioRequisicao()
             {
-                IdUsuario = IdUsuario
+                IdUsuario = IdUsuario,
             };
 
             ObterVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
@@ -77,6 +78,64 @@ namespace AcessibilidadeWebAPI.Controllers
             ListarVoluntarioOutput output = new ListarVoluntarioOutput()
             {
                 ArrVoluntario = resultado.ArrVoluntario
+            };
+
+            return new ObjectResult(output)
+            {
+                StatusCode = StatusCodes.Status200OK,
+            };
+        }
+
+        /// <summary>
+        /// Inserir Voluntario
+        /// </summary>
+        /// <remarks> Inserir Voluntario </remarks>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("api/[controller]/InserirVoluntario")]
+        [ProducesResponseType(typeof(InserirVoluntarioOutput), StatusCodes.Status200OK)]
+        public async Task<ObjectResult> InserirVoluntario(InserirVoluntarioInput input, CancellationToken cancellationToken)
+        {
+            InserirVoluntarioRequisicao requisicao = new InserirVoluntarioRequisicao()
+            {
+                Avaliacao = input.Avaliacao,
+                Disponivel = input.Disponivel,
+                IdUsuario = input.IdUsuario,
+            };
+
+            InserirVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+            InserirVoluntarioOutput output = new InserirVoluntarioOutput()
+            {
+                Voluntario = resultado.Voluntario,
+            };
+
+            return new ObjectResult(output)
+            {
+                StatusCode = StatusCodes.Status200OK,
+            };
+        }
+
+        /// <summary>
+        /// Editar Voluntario
+        /// </summary>
+        /// <remarks> Editar Voluntario </remarks>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("api/[controller]/EditarVoluntario")]
+        [ProducesResponseType(typeof(EditarVoluntarioOutput), StatusCodes.Status200OK)]
+        public async Task<ObjectResult> EditarVoluntario(EditarVoluntarioInput input, CancellationToken cancellationToken)
+        {
+            EditarVoluntarioRequisicao requisicao = new EditarVoluntarioRequisicao()
+            {
+                IdUsuario = input.IdUsuario,
+            };
+
+            EditarVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+            EditarVoluntarioOutput output = new EditarVoluntarioOutput()
+            {
+                IdUsuario = resultado.IdUsuario,
             };
 
             return new ObjectResult(output)

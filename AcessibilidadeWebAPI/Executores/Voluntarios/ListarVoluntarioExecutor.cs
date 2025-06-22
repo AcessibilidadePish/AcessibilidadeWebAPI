@@ -8,7 +8,7 @@ using AcessibilidadeWebAPI.Resultados.Voluntario;
 using AutoMapper;
 using MediatR;
 
-namespace AcessibilidadeWebAPI.Executores.Voluntario
+namespace AcessibilidadeWebAPI.Executores.Voluntarios
 {
     public class ListarVoluntarioExecutor : IRequestHandler<ListarVoluntarioRequisicao, ListarVoluntarioResultado>
     {
