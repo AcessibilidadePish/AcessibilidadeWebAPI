@@ -14,10 +14,13 @@ namespace AcessibilidadeWebAPI.BancoDados
 
         public virtual DbSet<Voluntario> Voluntarios { get; set; } = null!;
 
+        public virtual DbSet<Deficiente> Deficientes { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UsuarioMap());
             modelBuilder.ApplyConfiguration(new VoluntarioMap());
+            modelBuilder.ApplyConfiguration(new DeficienteMap());
             base.OnModelCreating(modelBuilder);
         }
     }

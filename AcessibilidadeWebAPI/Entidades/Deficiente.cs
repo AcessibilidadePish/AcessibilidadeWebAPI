@@ -1,10 +1,9 @@
 ﻿namespace AcessibilidadeWebAPI.Entidades
 {
-    public partial class Voluntario
+    public partial class Deficiente
     {
         public int IdUsuario { get; set; }
-        public bool Disponivel { get; set; }
-        public int Avaliacao { get; set; }
+        public int TipoDeficiencia { get; set; }
         public virtual Usuario IdUsuarioNavigation { get; set; }
     }
 }
