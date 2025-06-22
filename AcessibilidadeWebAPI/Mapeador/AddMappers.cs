@@ -26,6 +26,7 @@ namespace AcessibilidadeWebAPI.Mapeador
         {
             CreateMap<Voluntario, VoluntarioDto>();
             CreateMap<InserirVoluntarioRequisicao, Voluntario>();
+            CreateMap<EditarVoluntarioRequisicao, Voluntario>();
         }
     }
 }
