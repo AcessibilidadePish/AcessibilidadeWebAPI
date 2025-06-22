@@ -1,6 +1,7 @@
 
 using AcessibilidadeWebAPI.BancoDados;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
+using AcessibilidadeWebAPI.Repositorios.Voluntarios;
 using MediatR;
 using Microsoft.Azure.Devices;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ namespace AcessibilidadeWebAPI
             builder.Services.AddScoped<AzureMqttPushService>();
 
             builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+            builder.Services.AddScoped<IVoluntarioRepositorio, VoluntarioRepositorio>();
 
             string connectionString = builder.Configuration.GetSection("ConnectionStringOptions")["ConnectionString"];
             builder.Services.AddDbContext<AcessibilidadeDbContext>(options =>

@@ -23,8 +23,8 @@ namespace AcessibilidadeWebAPI.BancoDados.Mapeamento
             builder.Property(e => e.Telefone)
                 .HasColumnName("telefone");
 
-            builder.Property(e => e.EhDeficiente)
-                .HasColumnName("ehDeficiente");
+            builder.Property(e => e.Senha)
+                .HasColumnName("senha");
         }
     }
 }

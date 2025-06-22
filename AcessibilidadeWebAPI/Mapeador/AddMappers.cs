@@ -1,4 +1,5 @@
 ﻿using AcessibilidadeWebAPI.Dtos.Usuario;
+using AcessibilidadeWebAPI.Dtos.Voluntario;
 using AcessibilidadeWebAPI.Entidades;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AutoMapper;
@@ -10,6 +11,7 @@ namespace AcessibilidadeWebAPI.Mapeador
         public AddMappers()
         {
             AddUsuario();
+            AddVoluntario();
         }
 
         private void AddUsuario()
@@ -17,6 +19,11 @@ namespace AcessibilidadeWebAPI.Mapeador
             CreateMap<Usuario, UsuarioDto>();
             CreateMap<InserirUsuarioRequisicao, Usuario>();
             CreateMap<EditarUsuarioRequisicao, Usuario>();
+        }
+
+        private void AddVoluntario()
+        {
+            CreateMap<Voluntario, VoluntarioDto>();
         }
     }
 }

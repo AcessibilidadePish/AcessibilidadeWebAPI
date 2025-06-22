@@ -13,7 +13,6 @@ namespace AcessibilidadeWebAPI.Controllers
         /// <remarks> Obter Usuario </remarks>
         /// <param name="IdUsuario"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns> IdAcaoRecomendada </returns>
         [HttpGet("api/[controller]/ObterUsuario")]
         [ProducesResponseType(typeof(ObterUsuarioOutput), StatusCodes.Status200OK)]
         public async Task<ObjectResult> ObterUsuario(int IdUsuario, CancellationToken cancellationToken)
@@ -95,7 +94,7 @@ namespace AcessibilidadeWebAPI.Controllers
         {
             InserirUsuarioRequisicao requisicao = new InserirUsuarioRequisicao()
             {
-                EhDeficiente = input.EhDeficiente,
+                Senha = input.Senha,
                 Email = input.Email,
                 Nome = input.Nome,
                 Telefone = input.Telefone
@@ -127,7 +126,7 @@ namespace AcessibilidadeWebAPI.Controllers
             EditarUsuarioRequisicao requisicao = new EditarUsuarioRequisicao()
             {
                 IdUsuario = input.IdUsuario,
-                EhDeficiente = input.EhDeficiente,
+                Senha = input.Senha,
                 Email = input.Email,
                 Nome = input.Nome,
                 Telefone = input.Telefone

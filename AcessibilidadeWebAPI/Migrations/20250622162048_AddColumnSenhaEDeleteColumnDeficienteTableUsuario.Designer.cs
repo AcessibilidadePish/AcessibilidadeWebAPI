@@ -3,6 +3,7 @@ using AcessibilidadeWebAPI.BancoDados;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcessibilidadeWebAPI.Migrations
 {
     [DbContext(typeof(AcessibilidadeDbContext))]
-    partial class AcessibilidadeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250622162048_AddColumnSenhaEDeleteColumnDeficienteTableUsuario")]
+    partial class AddColumnSenhaEDeleteColumnDeficienteTableUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,43 +55,6 @@ namespace AcessibilidadeWebAPI.Migrations
                     b.HasKey("IdUsuario");
 
                     b.ToTable("usuario", (string)null);
-                });
-
-            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Voluntario", b =>
-                {
-                    b.Property<int>("IdUsuario")
-                        .HasColumnType("int")
-                        .HasColumnName("idUsuario");
-
-                    b.Property<int>("Avaliacao")
-                        .HasColumnType("int")
-                        .HasColumnName("avaliacao");
-
-                    b.Property<bool>("Disponivel")
-                        .HasColumnType("bit")
-                        .HasColumnName("disponivel");
-
-                    b.HasKey("IdUsuario");
-
-                    b.HasIndex(new[] { "IdUsuario" }, "IX_voluntario_idUsuario");
-
-                    b.ToTable("voluntario", (string)null);
-                });
-
-            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Voluntario", b =>
-                {
-                    b.HasOne("AcessibilidadeWebAPI.Entidades.Usuario", "IdUsuarioNavigation")
-                        .WithMany("Voluntarios")
-                        .HasForeignKey("IdUsuario")
-                        .IsRequired()
-                        .HasConstraintName("FK_voluntario_idUsuario_usuario_idUsuario");
-
-                    b.Navigation("IdUsuarioNavigation");
-                });
-
-            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Usuario", b =>
-                {
-                    b.Navigation("Voluntarios");
                 });
 #pragma warning restore 612, 618
         }

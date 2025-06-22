@@ -12,9 +12,12 @@ namespace AcessibilidadeWebAPI.BancoDados
         }
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
 
+        public virtual DbSet<Voluntario> Voluntarios { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UsuarioMap());
+            modelBuilder.ApplyConfiguration(new VoluntarioMap());
             base.OnModelCreating(modelBuilder);
         }
     }
