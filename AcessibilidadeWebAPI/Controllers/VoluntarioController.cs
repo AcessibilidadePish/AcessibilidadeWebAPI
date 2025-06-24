@@ -129,6 +129,8 @@ namespace AcessibilidadeWebAPI.Controllers
             EditarVoluntarioRequisicao requisicao = new EditarVoluntarioRequisicao()
             {
                 IdUsuario = input.IdUsuario,
+                Avaliacao = input.Avaliacao,
+                Disponivel = input.Disponivel,
             };
 
             EditarVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);

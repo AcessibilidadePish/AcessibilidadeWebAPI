@@ -2,6 +2,7 @@
 using AcessibilidadeWebAPI.Dtos.Usuario;
 using AcessibilidadeWebAPI.Dtos.Voluntario;
 using AcessibilidadeWebAPI.Entidades;
+using AcessibilidadeWebAPI.Requisicoes.Deficiente;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Voluntario;
 using AutoMapper;
@@ -34,6 +35,8 @@ namespace AcessibilidadeWebAPI.Mapeador
         private void AddDeficiente()
         {
             CreateMap<Deficiente, DeficienteDto>();
+            CreateMap<InserirDeficienteRequisicao, Voluntario>();
+            CreateMap<EditarDeficienteRequisicao, Voluntario>();
         }
     }
 }
