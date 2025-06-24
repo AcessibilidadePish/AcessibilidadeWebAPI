@@ -3,6 +3,7 @@ using AcessibilidadeWebAPI.BancoDados;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcessibilidadeWebAPI.Migrations
 {
     [DbContext(typeof(AcessibilidadeDbContext))]
-    partial class AcessibilidadeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250624014507_AddTableLocal")]
+    partial class AddTableLocal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +69,7 @@ namespace AcessibilidadeWebAPI.Migrations
 
                     b.HasKey("IdLocal");
 
-                    b.ToTable("local", (string)null);
+                    b.ToTable("Local", (string)null);
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Usuario", b =>
