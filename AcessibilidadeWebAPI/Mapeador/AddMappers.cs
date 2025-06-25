@@ -4,6 +4,7 @@ using AcessibilidadeWebAPI.Dtos.Usuario;
 using AcessibilidadeWebAPI.Dtos.Voluntario;
 using AcessibilidadeWebAPI.Entidades;
 using AcessibilidadeWebAPI.Requisicoes.Deficiente;
+using AcessibilidadeWebAPI.Requisicoes.Locals;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Voluntario;
 using AutoMapper;
@@ -44,6 +45,8 @@ namespace AcessibilidadeWebAPI.Mapeador
         private void AddLocal()
         {
             CreateMap<Local, LocalDto>();
+            CreateMap<InserirLocalRequisicao, Local>();
+            CreateMap<EditarLocalRequisicao, Local>();
         }
     }
 }
