@@ -1,5 +1,6 @@
 
 using AcessibilidadeWebAPI.BancoDados;
+using AcessibilidadeWebAPI.Repositorios.AvaliacaoAvaliacaoLocals;
 using AcessibilidadeWebAPI.Repositorios.Deficientes;
 using AcessibilidadeWebAPI.Repositorios.Locals;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
@@ -30,6 +31,7 @@ namespace AcessibilidadeWebAPI
             builder.Services.AddScoped<IVoluntarioRepositorio, VoluntarioRepositorio>();
             builder.Services.AddScoped<IDeficienteRepositorio, DeficienteRepositorio>();
             builder.Services.AddScoped<ILocalRepositorio, LocalRepositorio>();
+            builder.Services.AddScoped<IAvaliacaoLocalRepositorio, AvaliacaoLocalRepositorio>();
 
             string connectionString = builder.Configuration.GetSection("ConnectionStringOptions")["ConnectionString"];
             builder.Services.AddDbContext<AcessibilidadeDbContext>(options =>

@@ -1,4 +1,5 @@
-﻿using AcessibilidadeWebAPI.Dtos.Deficiente;
+﻿using AcessibilidadeWebAPI.Dtos.AvaliacaoLocal;
+using AcessibilidadeWebAPI.Dtos.Deficiente;
 using AcessibilidadeWebAPI.Dtos.Local;
 using AcessibilidadeWebAPI.Dtos.Usuario;
 using AcessibilidadeWebAPI.Dtos.Voluntario;
@@ -19,6 +20,7 @@ namespace AcessibilidadeWebAPI.Mapeador
             AddVoluntario();
             AddDeficiente();
             AddLocal();
+            AddAvaliacaoLocal();
         }
 
         private void AddUsuario()
@@ -47,6 +49,11 @@ namespace AcessibilidadeWebAPI.Mapeador
             CreateMap<Local, LocalDto>();
             CreateMap<InserirLocalRequisicao, Local>();
             CreateMap<EditarLocalRequisicao, Local>();
+        }
+
+        private void AddAvaliacaoLocal()
+        {
+            CreateMap<AvaliacaoLocal, AvaliacaoLocalDto>();
         }
     }
 }

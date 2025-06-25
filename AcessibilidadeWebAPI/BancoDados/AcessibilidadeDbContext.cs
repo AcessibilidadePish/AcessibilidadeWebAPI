@@ -18,12 +18,17 @@ namespace AcessibilidadeWebAPI.BancoDados
 
         public virtual DbSet<Local> Locals { get; set; } = null!;
 
+        public virtual DbSet<AvaliacaoLocal> AvaliacaoLocals { get; set; } = null!;
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UsuarioMap());
             modelBuilder.ApplyConfiguration(new VoluntarioMap());
             modelBuilder.ApplyConfiguration(new DeficienteMap());
             modelBuilder.ApplyConfiguration(new LocalMap());
+            modelBuilder.ApplyConfiguration(new AvaliacaoLocalMap());
+
             base.OnModelCreating(modelBuilder);
         }
     }
