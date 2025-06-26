@@ -1,12 +1,15 @@
 ﻿using AcessibilidadeWebAPI.Dtos.AvaliacaoLocal;
 using AcessibilidadeWebAPI.Dtos.Deficiente;
 using AcessibilidadeWebAPI.Dtos.Local;
+using AcessibilidadeWebAPI.Dtos.SolicitacaoAjuda;
 using AcessibilidadeWebAPI.Dtos.Usuario;
 using AcessibilidadeWebAPI.Dtos.Voluntario;
 using AcessibilidadeWebAPI.Entidades;
+using AcessibilidadeWebAPI.Migrations;
 using AcessibilidadeWebAPI.Requisicoes.AvaliacaoLocals;
 using AcessibilidadeWebAPI.Requisicoes.Deficiente;
 using AcessibilidadeWebAPI.Requisicoes.Locals;
+using AcessibilidadeWebAPI.Requisicoes.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Requisicoes.Usuarios;
 using AcessibilidadeWebAPI.Requisicoes.Voluntario;
 using AutoMapper;
@@ -22,6 +25,7 @@ namespace AcessibilidadeWebAPI.Mapeador
             AddDeficiente();
             AddLocal();
             AddAvaliacaoLocal();
+            AddSolicitacaoAjuda();
         }
 
         private void AddUsuario()
@@ -57,6 +61,13 @@ namespace AcessibilidadeWebAPI.Mapeador
             CreateMap<AvaliacaoLocal, AvaliacaoLocalDto>();
             CreateMap<InserirAvaliacaoLocalRequisicao, AvaliacaoLocal>();
             CreateMap<EditarAvaliacaoLocalRequisicao, AvaliacaoLocal>();
+        }
+
+        private void AddSolicitacaoAjuda()
+        {
+            CreateMap<SolicitacaoAjuda, SolicitacaoAjudaDto>();
+            CreateMap<InserirSolicitacaoAjudaRequisicao, SolicitacaoAjuda>();
+            CreateMap<EditarSolicitacaoAjudaRequisicao, SolicitacaoAjuda>();
         }
     }
 }
