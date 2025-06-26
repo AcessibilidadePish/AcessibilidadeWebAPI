@@ -20,6 +20,9 @@ namespace AcessibilidadeWebAPI.BancoDados
 
         public virtual DbSet<AvaliacaoLocal> AvaliacaoLocals { get; set; } = null!;
 
+        public virtual DbSet<SolicitacaoAjuda> SolicitacaoAjudas { get; set; } = null!;
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +31,7 @@ namespace AcessibilidadeWebAPI.BancoDados
             modelBuilder.ApplyConfiguration(new DeficienteMap());
             modelBuilder.ApplyConfiguration(new LocalMap());
             modelBuilder.ApplyConfiguration(new AvaliacaoLocalMap());
+            modelBuilder.ApplyConfiguration(new SolicitacaoAjudaMap());
 
             base.OnModelCreating(modelBuilder);
         }

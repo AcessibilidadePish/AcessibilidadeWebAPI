@@ -4,6 +4,7 @@ using AcessibilidadeWebAPI.BancoDados;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcessibilidadeWebAPI.Migrations
 {
     [DbContext(typeof(AcessibilidadeDbContext))]
-    partial class AcessibilidadeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250626191735_AddTableSolicitacaoAjuda")]
+    partial class AddTableSolicitacaoAjuda
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
