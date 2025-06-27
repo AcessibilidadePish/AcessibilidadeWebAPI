@@ -94,7 +94,6 @@ namespace AcessibilidadeWebAPI.Controllers
         {
             InserirLocalRequisicao requisicao = new InserirLocalRequisicao()
             {
-
                 AvaliacaoAcessibilidade = input.AvaliacaoAcessibilidade,
                 Descricao = input.Descricao,
                 Latitude = input.Latitude,

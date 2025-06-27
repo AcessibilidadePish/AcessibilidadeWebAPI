@@ -7,6 +7,7 @@ using AcessibilidadeWebAPI.Dtos.Usuario;
 using AcessibilidadeWebAPI.Dtos.Voluntario;
 using AcessibilidadeWebAPI.Entidades;
 using AcessibilidadeWebAPI.Migrations;
+using AcessibilidadeWebAPI.Requisicoes.Assistencias;
 using AcessibilidadeWebAPI.Requisicoes.AvaliacaoLocals;
 using AcessibilidadeWebAPI.Requisicoes.Deficiente;
 using AcessibilidadeWebAPI.Requisicoes.Locals;
@@ -76,6 +77,8 @@ namespace AcessibilidadeWebAPI.Mapeador
         private void AddAssistencia()
         {
             CreateMap<Assistencia, AssistenciaDto>();
+            CreateMap<InserirAssistenciaRequisicao, Assistencia>();
+            CreateMap<EditarAssistenciaRequisicao, Assistencia>();
         }
     }
 }
