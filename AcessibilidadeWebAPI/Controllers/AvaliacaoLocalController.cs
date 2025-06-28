@@ -145,5 +145,57 @@ namespace AcessibilidadeWebAPI.Controllers
                 StatusCode = StatusCodes.Status200OK,
             };
         }
+
+        /// <summary>
+        /// Listar Avaliações Completas com Informações de Usuário e Local
+        /// </summary>
+        /// <remarks>Retorna todas as avaliações com informações detalhadas de usuário e local</remarks>
+        /// <param name="pagina">Número da página (padrão: 1)</param>
+        /// <param name="tamanhoPagina">Itens por página (padrão: 50)</param>
+        /// <param name="localId">Filtrar por ID do local (opcional)</param>
+        /// <param name="usuarioId">Filtrar por ID do usuário (opcional)</param>
+        /// <param name="acessivel">Filtrar por acessibilidade (opcional)</param>
+        /// <param name="dataInicio">Filtrar por data inicial (opcional)</param>
+        /// <param name="dataFim">Filtrar por data final (opcional)</param>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("api/[controller]/ListarAvaliacoesCompletas")]
+        [ProducesResponseType(typeof(ListarAvaliacaoCompletaOutput), StatusCodes.Status200OK)]
+        public async Task<ObjectResult> ListarAvaliacoesCompletas(
+            [FromQuery] int pagina = 1,
+            [FromQuery] int tamanhoPagina = 50,
+            [FromQuery] int? localId = null,
+            [FromQuery] int? usuarioId = null,
+            [FromQuery] bool? acessivel = null,
+            [FromQuery] DateTime? dataInicio = null,
+            [FromQuery] DateTime? dataFim = null,
+            CancellationToken cancellationToken = default)
+        {
+            ListarAvaliacaoCompletaRequisicao requisicao = new ListarAvaliacaoCompletaRequisicao()
+            {
+                Pagina = pagina,
+                TamanhoPagina = tamanhoPagina,
+                LocalId = localId,
+                UsuarioId = usuarioId,
+                Acessivel = acessivel,
+                DataInicio = dataInicio,
+                DataFim = dataFim
+            };
+
+            ListarAvaliacaoCompletaResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+            ListarAvaliacaoCompletaOutput output = new ListarAvaliacaoCompletaOutput()
+            {
+                AvaliacoesCompletas = resultado.AvaliacoesCompletas,
+                Total = resultado.Total,
+                PaginaAtual = resultado.PaginaAtual,
+                TamanhoPagina = resultado.TamanhoPagina,
+                TemProximaPagina = resultado.TemProximaPagina
+            };
+
+            return new ObjectResult(output)
+            {
+                StatusCode = StatusCodes.Status200OK,
+            };
+        }
     }
 }

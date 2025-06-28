@@ -257,5 +257,39 @@ namespace AcessibilidadeWebAPI.Controllers
                 return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Obter estatísticas de voluntários por região
+        /// </summary>
+        /// <remarks>Retorna distribuição de voluntários por região com métricas de disponibilidade e avaliação</remarks>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("estatisticas-por-regiao")]
+        [ProducesResponseType(typeof(EstatisticasPorRegiaoOutput), StatusCodes.Status200OK)]
+        public async Task<ActionResult<EstatisticasPorRegiaoOutput>> EstatisticasPorRegiao(CancellationToken cancellationToken)
+        {
+            try
+            {
+                EstatisticasPorRegiaoRequisicao requisicao = new EstatisticasPorRegiaoRequisicao();
+
+                EstatisticasPorRegiaoResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+                EstatisticasPorRegiaoOutput output = new EstatisticasPorRegiaoOutput()
+                {
+                    Estatisticas = resultado.Estatisticas.Select(e => new EstatisticaRegiao
+                    {
+                        Regiao = e.Regiao,
+                        Quantidade = e.Quantidade,
+                        PercentualDisponivel = e.PercentualDisponivel,
+                        AvaliacaoMedia = e.AvaliacaoMedia
+                    })
+                };
+
+                return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
     }
 }
