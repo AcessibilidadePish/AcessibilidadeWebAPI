@@ -9,6 +9,6 @@ namespace AcessibilidadeWebAPI.Requisicoes.Assistencias
         public int IdSolicitacaoAjuda { get; set; }
         public int IdUsuario { get; set; }
         public DateTimeOffset DataAceite { get; set; }
-        public DateTimeOffset DataConclusao { get; set; }
+        public DateTimeOffset? DataConclusao { get; set; }
     }
 }

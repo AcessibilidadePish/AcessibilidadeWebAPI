@@ -15,7 +15,7 @@ namespace AcessibilidadeWebAPI.BancoDados.Mapeamento
             builder.Property(e => e.IdSolicitacaoAjuda)
                 .HasColumnName("idSolicitacaoAjuda");
 
-            builder.Property(e => e.IdUsuario).HasColumnName("idUsuario");
+            builder.Property(e => e.DeficienteUsuarioId).HasColumnName("idUsuario");
 
             builder.Property(e => e.Descricao).HasColumnName("descricao");
 
@@ -25,9 +25,15 @@ namespace AcessibilidadeWebAPI.BancoDados.Mapeamento
 
             builder.Property(e => e.DataResposta).HasColumnName("dataResposta");
 
-            builder.HasOne(d => d.IdUsuarioNavigation)
+            builder.Property(e => e.Latitude).HasColumnName("latitude");
+
+            builder.Property(e => e.Longitude).HasColumnName("longitude");
+
+            builder.Property(e => e.EnderecoReferencia).HasColumnName("enderecoReferencia");
+
+            builder.HasOne(d => d.DeficienteUsuarioNavigation)
                 .WithMany(p => p.SolicitacaoAjudas)
-                .HasForeignKey(d => d.IdUsuario)
+                .HasForeignKey(d => d.DeficienteUsuarioId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_solicitacaoAjudae_idUsuario_deficiente_idUsuario");
 

@@ -6,6 +6,7 @@
         {
             Voluntarios = new HashSet<Voluntario>();
             Deficientes = new HashSet<Deficiente>();
+            Dispositivos = new HashSet<Dispositivo>();
         }
         public int IdUsuario { get; set; }
         public string Nome { get; set; } = null!;
@@ -14,7 +15,7 @@
         public string Senha { get; set; }
 
         public virtual ICollection<Voluntario> Voluntarios { get; set; }
-
         public virtual ICollection<Deficiente> Deficientes { get; set; }
+        public virtual ICollection<Dispositivo> Dispositivos { get; set; }
     }
 }

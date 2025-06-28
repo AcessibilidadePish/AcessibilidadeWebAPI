@@ -9,5 +9,8 @@ namespace AcessibilidadeWebAPI.Requisicoes.SolicitacaoAjudas
         public string Descricao { get; set; }
         public int Status { get; set; }
         public DateTimeOffset DataSolicitacao { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? EnderecoReferencia { get; set; }
     }
 }

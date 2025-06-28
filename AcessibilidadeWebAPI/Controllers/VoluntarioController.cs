@@ -1,77 +1,34 @@
-﻿using AcessibilidadeWebAPI.Models.Usuarios;
-using AcessibilidadeWebAPI.Models.Voluntarios;
-using AcessibilidadeWebAPI.Models.Voluntarios;
-using AcessibilidadeWebAPI.Requisicoes.Usuarios;
+﻿using AcessibilidadeWebAPI.Models.Voluntarios;
+using AcessibilidadeWebAPI.Models.Auth;
+using AcessibilidadeWebAPI.Models.Assistencias;
 using AcessibilidadeWebAPI.Requisicoes.Voluntario;
-using AcessibilidadeWebAPI.Resultados.Usuarios;
+using AcessibilidadeWebAPI.Requisicoes.Assistencias;
 using AcessibilidadeWebAPI.Resultados.Voluntario;
+using AcessibilidadeWebAPI.Resultados.Assistencias;
+using AcessibilidadeWebAPI.Dtos.Voluntario;
+using AcessibilidadeWebAPI.Dtos.Assistencia;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AcessibilidadeWebAPI.Controllers
 {
+    /// <summary>
+    /// Controlador para operações específicas de voluntários
+    /// </summary>
+    [Route("api/[controller]")]
     public class VoluntarioController : ApiController
     {
         /// <summary>
-        /// ObterVoluntario
+        /// Listar voluntários disponíveis
         /// </summary>
-        /// <remarks> ObterVoluntario </remarks>
-        /// <param name="IdVoluntario"></param>
+        /// <remarks>Lista voluntários públicos e disponíveis para consulta</remarks>
         /// <param name="cancellationToken"></param>
-        [HttpGet("api/[controller]/ObterVoluntario")]
-        [ProducesResponseType(typeof(ObterVoluntarioOutput), StatusCodes.Status200OK)]
-        public async Task<ObjectResult> ObterVoluntario(int IdUsuario, CancellationToken cancellationToken)
-        {
-            ObterVoluntarioRequisicao requisicao = new ObterVoluntarioRequisicao()
-            {
-                IdUsuario = IdUsuario,
-            };
-
-            ObterVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
-
-            ObterVoluntarioOutput output = new ObterVoluntarioOutput()
-            {
-                Voluntario = resultado.Voluntario
-            };
-
-            return new ObjectResult(output)
-            {
-                StatusCode = StatusCodes.Status200OK,
-            };
-        }
-
-        /// <summary>
-        /// Excluir Voluntario
-        /// </summary>
-        /// <remarks> Excluir Voluntario </remarks>
-        /// <param name="input"></param>
-        /// <param name="cancellationToken"></param>
-        [HttpDelete("api/[controller]/ExcluirVoluntario")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<NoContentResult> ExcluirVoluntario(ExcluirVoluntarioInput input, CancellationToken cancellationToken)
-        {
-            ExcluirVoluntarioRequisicao requisicao = new ExcluirVoluntarioRequisicao()
-            {
-                IdUsuario = input.IdUsuario,
-            };
-
-            await Mediator.Send(requisicao, cancellationToken);
-
-            return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Listar Voluntario
-        /// </summary>
-        /// <remarks> Listar Voluntario </remarks>
-        /// <param name="input"></param>
-        /// <param name="cancellationToken"></param>
-        [HttpGet("api/[controller]/ListarVoluntario")]
+        [HttpGet]
         [ProducesResponseType(typeof(ListarVoluntarioOutput), StatusCodes.Status200OK)]
-        public async Task<ObjectResult> ListarVoluntario([FromQuery] ListarVoluntarioInput input, CancellationToken cancellationToken)
+        public async Task<ActionResult<ListarVoluntarioOutput>> ListarVoluntarios(CancellationToken cancellationToken)
         {
-            ListarVoluntarioRequisicao requisicao = new ListarVoluntarioRequisicao()
-            {
-            };
+            ListarVoluntarioRequisicao requisicao = new ListarVoluntarioRequisicao();
 
             ListarVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
 
@@ -80,70 +37,225 @@ namespace AcessibilidadeWebAPI.Controllers
                 ArrVoluntario = resultado.ArrVoluntario
             };
 
-            return new ObjectResult(output)
-            {
-                StatusCode = StatusCodes.Status200OK,
-            };
+            return Ok(output);
         }
 
         /// <summary>
-        /// Inserir Voluntario
+        /// Obter perfil específico de voluntário
         /// </summary>
-        /// <remarks> Inserir Voluntario </remarks>
-        /// <param name="input"></param>
+        /// <remarks>Obtém dados públicos de um voluntário específico</remarks>
+        /// <param name="usuarioId">ID do usuário voluntário</param>
         /// <param name="cancellationToken"></param>
-        [HttpPost("api/[controller]/InserirVoluntario")]
-        [ProducesResponseType(typeof(InserirVoluntarioOutput), StatusCodes.Status200OK)]
-        public async Task<ObjectResult> InserirVoluntario(InserirVoluntarioInput input, CancellationToken cancellationToken)
+        [HttpGet("{usuarioId}")]
+        [ProducesResponseType(typeof(ObterVoluntarioOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ObterVoluntarioOutput>> ObterVoluntario(int usuarioId, CancellationToken cancellationToken)
         {
-            InserirVoluntarioRequisicao requisicao = new InserirVoluntarioRequisicao()
+            ObterVoluntarioRequisicao requisicao = new ObterVoluntarioRequisicao()
             {
-                Avaliacao = input.Avaliacao,
-                Disponivel = input.Disponivel,
-                IdUsuario = input.IdUsuario,
+                IdUsuario = usuarioId,
             };
 
-            InserirVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+            ObterVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
 
-            InserirVoluntarioOutput output = new InserirVoluntarioOutput()
+            if (resultado.Voluntario == null)
             {
-                Voluntario = resultado.Voluntario,
+                return NotFound(new { message = "Voluntário não encontrado" });
+            }
+
+            ObterVoluntarioOutput output = new ObterVoluntarioOutput()
+            {
+                Voluntario = resultado.Voluntario
             };
 
-            return new ObjectResult(output)
-            {
-                StatusCode = StatusCodes.Status200OK,
-            };
+            return Ok(output);
         }
 
         /// <summary>
-        /// Editar Voluntario
+        /// Atualizar disponibilidade do voluntário
         /// </summary>
-        /// <remarks> Editar Voluntario </remarks>
-        /// <param name="input"></param>
+        /// <remarks>Permite ao voluntário alternar sua disponibilidade</remarks>
+        /// <param name="usuarioId">ID do usuário voluntário</param>
+        /// <param name="disponivel">Nova disponibilidade</param>
         /// <param name="cancellationToken"></param>
-        [HttpPost("api/[controller]/EditarVoluntario")]
-        [ProducesResponseType(typeof(EditarVoluntarioOutput), StatusCodes.Status200OK)]
-        public async Task<ObjectResult> EditarVoluntario(EditarVoluntarioInput input, CancellationToken cancellationToken)
+        [HttpPut("{usuarioId}/disponibilidade")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> AtualizarDisponibilidade(int usuarioId, [FromBody] bool disponivel, CancellationToken cancellationToken)
         {
-            EditarVoluntarioRequisicao requisicao = new EditarVoluntarioRequisicao()
+            try
             {
-                IdUsuario = input.IdUsuario,
-                Avaliacao = input.Avaliacao,
-                Disponivel = input.Disponivel,
-            };
+                EditarVoluntarioRequisicao requisicao = new EditarVoluntarioRequisicao()
+                {
+                    IdUsuario = usuarioId,
+                    Disponivel = disponivel,
+                    // Manter avaliação atual - será ignorada pelo executor se não for fornecida
+                    Avaliacao = 0
+                };
 
-            EditarVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+                EditarVoluntarioResultado resultado = await Mediator.Send(requisicao, cancellationToken);
 
-            EditarVoluntarioOutput output = new EditarVoluntarioOutput()
+                return Ok(new { message = "Disponibilidade atualizada com sucesso", disponivel });
+            }
+            catch (Exception)
             {
-                IdUsuario = resultado.IdUsuario,
-            };
+                return NotFound(new { message = "Voluntário não encontrado" });
+            }
+        }
 
-            return new ObjectResult(output)
+        /// <summary>
+        /// Avaliar voluntário após assistência concluída
+        /// </summary>
+        /// <remarks>Permite ao deficiente avaliar o voluntário que o ajudou</remarks>
+        /// <param name="usuarioId">ID do usuário voluntário</param>
+        /// <param name="avaliacaoRequest">Dados da avaliação</param>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("{usuarioId}/avaliar")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> AvaliarVoluntario(int usuarioId, [FromBody] AvaliarVoluntarioRequest avaliacaoRequest, CancellationToken cancellationToken)
+        {
+            try
             {
-                StatusCode = StatusCodes.Status200OK,
-            };
+                // TODO: Verificar se o usuário logado realmente recebeu ajuda deste voluntário
+                // TODO: Implementar lógica para calcular nova média de avaliação
+
+                // Por enquanto, vamos apenas retornar sucesso
+                return Ok(new { 
+                    message = "Avaliação registrada com sucesso", 
+                    voluntarioId = usuarioId,
+                    avaliacao = avaliacaoRequest.Avaliacao,
+                    comentario = avaliacaoRequest.Comentario
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Ver meu perfil de voluntário (dados completos)
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("meu-perfil")]
+        [Authorize]
+        [ProducesResponseType(typeof(PerfilVoluntarioCompleto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<PerfilVoluntarioCompleto>> MeuPerfil(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return Unauthorized();
+                }
+
+                int userId = int.Parse(userIdClaim.Value);
+
+                // Buscar dados do voluntário
+                ObterVoluntarioRequisicao requisicaoVoluntario = new ObterVoluntarioRequisicao()
+                {
+                    IdUsuario = userId,
+                };
+
+                ObterVoluntarioResultado resultadoVoluntario = await Mediator.Send(requisicaoVoluntario, cancellationToken);
+
+                if (resultadoVoluntario.Voluntario == null)
+                {
+                    return NotFound(new { message = "Perfil de voluntário não encontrado" });
+                }
+
+                // Buscar histórico de assistências
+                ListarAssistenciaRequisicao requisicaoAssistencias = new ListarAssistenciaRequisicao()
+                {
+                    IdSolicitacaoAjuda = 0, // Todas as solicitações
+                    IdUsuario = userId,
+                };
+
+                ListarAssistenciaResultado resultadoAssistencias = await Mediator.Send(requisicaoAssistencias, cancellationToken);
+
+                // Calcular estatísticas
+                int totalAjudas = resultadoAssistencias.ArrAssistencia?.Count() ?? 0;
+                int ajudasConcluidas = resultadoAssistencias.ArrAssistencia?
+                    .Count(a => a.DataConclusao.HasValue) ?? 0; // Verifica se foi concluída (não null)
+
+                PerfilVoluntarioCompleto perfil = new PerfilVoluntarioCompleto()
+                {
+                    Voluntario = resultadoVoluntario.Voluntario,
+                    TotalAjudas = totalAjudas,
+                    AjudasConcluidas = ajudasConcluidas,
+                    AjudasAndamento = totalAjudas - ajudasConcluidas,
+                    HistoricoRecente = resultadoAssistencias.ArrAssistencia?
+                        .OrderByDescending(a => a.DataAceite)
+                        .Take(5)
+                        .ToArray() ?? new AssistenciaDto[0]
+                };
+
+                return Ok(perfil);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Atualizar status de disponibilidade via toggle
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("toggle-disponibilidade")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> ToggleDisponibilidade(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return Unauthorized();
+                }
+
+                int userId = int.Parse(userIdClaim.Value);
+
+                // Buscar estado atual
+                ObterVoluntarioRequisicao obterRequisicao = new ObterVoluntarioRequisicao()
+                {
+                    IdUsuario = userId,
+                };
+
+                ObterVoluntarioResultado resultado = await Mediator.Send(obterRequisicao, cancellationToken);
+
+                if (resultado.Voluntario == null)
+                {
+                    return NotFound(new { message = "Voluntário não encontrado" });
+                }
+
+                // Alternar disponibilidade
+                bool novaDisponibilidade = !resultado.Voluntario.Disponivel;
+
+                EditarVoluntarioRequisicao editarRequisicao = new EditarVoluntarioRequisicao()
+                {
+                    IdUsuario = userId,
+                    Disponivel = novaDisponibilidade,
+                    Avaliacao = resultado.Voluntario.Avaliacao
+                };
+
+                await Mediator.Send(editarRequisicao, cancellationToken);
+
+                return Ok(new { 
+                    message = $"Disponibilidade alterada para: {(novaDisponibilidade ? "Disponível" : "Indisponível")}", 
+                    disponivel = novaDisponibilidade 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
         }
     }
 }

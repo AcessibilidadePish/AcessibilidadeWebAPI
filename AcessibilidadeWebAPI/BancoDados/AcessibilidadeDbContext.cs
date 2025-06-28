@@ -24,6 +24,9 @@ namespace AcessibilidadeWebAPI.BancoDados
 
         public virtual DbSet<Assistencia> Assistencias { get; set; } = null!;
 
+        public virtual DbSet<Dispositivo> Dispositivos { get; set; } = null!;
+
+        public virtual DbSet<HistoricoStatusSolicitacao> HistoricoStatusSolicitacao { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +37,8 @@ namespace AcessibilidadeWebAPI.BancoDados
             modelBuilder.ApplyConfiguration(new AvaliacaoLocalMap());
             modelBuilder.ApplyConfiguration(new SolicitacaoAjudaMap());
             modelBuilder.ApplyConfiguration(new AssistenciaMap());
-
+            modelBuilder.ApplyConfiguration(new DispositivoMap());
+            modelBuilder.ApplyConfiguration(new HistoricoStatusSolicitacaoMap());
 
             base.OnModelCreating(modelBuilder);
         }

@@ -14,23 +14,23 @@ namespace AcessibilidadeWebAPI.BancoDados.Mapeamento
 
             builder.Property(e => e.IdAssistencia).HasColumnName("idAssistencia");
 
-            builder.Property(e => e.IdSolicitacaoAjuda).HasColumnName("idSolicitacaoAjuda");
+            builder.Property(e => e.SolicitacaoAjudaId).HasColumnName("idSolicitacaoAjuda");
 
-            builder.Property(e => e.IdUsuario).HasColumnName("idUsuario");
+            builder.Property(e => e.VoluntarioUsuarioId).HasColumnName("idUsuario");
 
             builder.Property(e => e.DataConclusao).HasColumnName("dataConclusao");
 
             builder.Property(e => e.DataAceite).HasColumnName("dataAceite");
 
-            builder.HasOne(d => d.IdUsuarioNavigation)
+            builder.HasOne(d => d.VoluntarioUsuarioNavigation)
                .WithMany(p => p.Assistencias)
-               .HasForeignKey(d => d.IdUsuario)
+               .HasForeignKey(d => d.VoluntarioUsuarioId)
                .OnDelete(DeleteBehavior.ClientSetNull)
-               .HasConstraintName("FK_assistencia_idUsuario_deficiente_idUsuario");
+               .HasConstraintName("FK_assistencia_idUsuario_voluntario_idUsuario");
 
-            builder.HasOne(d => d.IdSolicitacaoAjudaNavigation)
+            builder.HasOne(d => d.SolicitacaoAjudaNavigation)
                .WithMany(p => p.Assistencias)
-               .HasForeignKey(d => d.IdSolicitacaoAjuda)
+               .HasForeignKey(d => d.SolicitacaoAjudaId)
                .OnDelete(DeleteBehavior.ClientSetNull)
                .HasConstraintName("FK_assistencia_idSolicitacaoAjuda_solicitacaoAjuda_idSolicitacaoAjuda");
         }

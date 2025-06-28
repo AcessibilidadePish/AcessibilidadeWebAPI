@@ -26,5 +26,9 @@ namespace AcessibilidadeWebAPI.Repositorios.Usuarios
         int DeletarMultiplos(IEnumerable<Usuario> models);
 
         int InserirMultiplos(IEnumerable<Usuario> models);
+
+        Task<Usuario> ObterUsuario(int id);
+        Task<Usuario> ObterUsuarioPorEmail(string email);
+        Task<Usuario> InserirUsuario(Usuario usuario);
     }
 }

@@ -16,7 +16,8 @@ namespace AcessibilidadeWebAPI.BancoDados.Mapeamento
                 .HasColumnName("disponivel");
 
             builder.Property(e => e.Avaliacao)
-                .HasColumnName("avaliacao");
+                .HasColumnName("avaliacao")
+                .HasColumnType("decimal(3,2)");
 
             builder.HasIndex(e => e.IdUsuario, "IX_voluntario_idUsuario");
 

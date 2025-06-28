@@ -1,38 +1,140 @@
 ﻿
 using AcessibilidadeWebAPI.Models.Assistencias;
+using AcessibilidadeWebAPI.Models.Auth;
 using AcessibilidadeWebAPI.Requisicoes.Assistencias;
 using AcessibilidadeWebAPI.Resultados.Assistencias;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AcessibilidadeWebAPI.Controllers
 {
+    /// <summary>
+    /// Controlador para assistências (voluntários aceitando solicitações)
+    /// </summary>
+    [Route("api/assistencias")]
     public class AssistenciaController : ApiController
-    {/// <summary>
-     /// ObterAssistencia
-     /// </summary>
-     /// <remarks> ObterAssistencia </remarks>
-     /// <param name="IdAssistencia"></param>
-     /// <param name="cancellationToken"></param>
-        [HttpGet("api/[controller]/ObterAssistencia")]
-        [ProducesResponseType(typeof(ObterAssistenciaOutput), StatusCodes.Status200OK)]
-        public async Task<ObjectResult> ObterAssistencia(int IdAssistencia, CancellationToken cancellationToken)
+    {
+        /// <summary>
+        /// Aceitar uma solicitação de ajuda (voluntários autenticados)
+        /// </summary>
+        /// <param name="solicitacaoId">ID da solicitação a ser aceita</param>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("aceitar/{solicitacaoId}")]
+        [Authorize]
+        [ProducesResponseType(typeof(InserirAssistenciaOutput), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<InserirAssistenciaOutput>> AceitarSolicitacao(int solicitacaoId, CancellationToken cancellationToken)
         {
-            ObterAssistenciaRequisicao requisicao = new ObterAssistenciaRequisicao()
+            try
             {
-                IdAssistencia = IdAssistencia,
-            };
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return Unauthorized();
+                }
 
-            ObterAssistenciaResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+                int voluntarioId = int.Parse(userIdClaim.Value);
 
-            ObterAssistenciaOutput output = new ObterAssistenciaOutput()
+                InserirAssistenciaRequisicao requisicao = new InserirAssistenciaRequisicao()
+                {
+                    IdUsuario = voluntarioId,
+                    IdSolicitacaoAjuda = solicitacaoId,
+                    DataAceite = DateTimeOffset.UtcNow,
+                    DataConclusao = null // null = não concluído ainda
+                };
+
+                InserirAssistenciaResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+                InserirAssistenciaOutput output = new InserirAssistenciaOutput()
+                {
+                    Assistencia = resultado.Assistencia,
+                };
+
+                return CreatedAtAction(nameof(ObterAssistencia), new { id = resultado.Assistencia.IdAssistencia }, output);
+            }
+            catch (Exception ex)
             {
-                Assistencia = resultado.Assistencia
-            };
+                return BadRequest(new { message = "Erro ao aceitar solicitação", error = ex.Message });
+            }
+        }
 
-            return new ObjectResult(output)
+        /// <summary>
+        /// Minhas assistências (voluntário logado)
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("minhas")]
+        [Authorize]
+        [ProducesResponseType(typeof(ListarAssistenciaOutput), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ListarAssistenciaOutput>> MinhasAssistencias(CancellationToken cancellationToken)
+        {
+            try
             {
-                StatusCode = StatusCodes.Status200OK,
-            };
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return Unauthorized();
+                }
+
+                int voluntarioId = int.Parse(userIdClaim.Value);
+
+                ListarAssistenciaRequisicao requisicao = new ListarAssistenciaRequisicao()
+                {
+                    IdSolicitacaoAjuda = 0, // 0 = todas as solicitações
+                    IdUsuario = voluntarioId,
+                };
+
+                ListarAssistenciaResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+                ListarAssistenciaOutput output = new ListarAssistenciaOutput()
+                {
+                    ArrAssistencia = resultado.ArrAssistencia
+                };
+
+                return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Obter assistência específica
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ObterAssistenciaOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ObterAssistenciaOutput>> ObterAssistencia(int id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                ObterAssistenciaRequisicao requisicao = new ObterAssistenciaRequisicao()
+                {
+                    IdAssistencia = id,
+                };
+
+                ObterAssistenciaResultado resultado = await Mediator.Send(requisicao, cancellationToken);
+
+                if (resultado.Assistencia == null)
+                {
+                    return NotFound(new { message = "Assistência não encontrada" });
+                }
+
+                ObterAssistenciaOutput output = new ObterAssistenciaOutput()
+                {
+                    Assistencia = resultado.Assistencia
+                };
+
+                return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
         }
 
         /// <summary>

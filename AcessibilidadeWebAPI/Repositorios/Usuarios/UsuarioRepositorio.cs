@@ -99,5 +99,23 @@ namespace AcessibilidadeWebAPI.Repositorios.Usuarios
             _context.Set<Usuario>().AddRange(models);
             return _context.SaveChanges();
         }
+
+        public async Task<Usuario> ObterUsuario(int id)
+        {
+            return await _context.Set<Usuario>().FindAsync(id);
+        }
+
+        public async Task<Usuario> ObterUsuarioPorEmail(string email)
+        {
+            return await _context.Set<Usuario>()
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<Usuario> InserirUsuario(Usuario usuario)
+        {
+            _context.Set<Usuario>().Add(usuario);
+            await _context.SaveChangesAsync();
+            return usuario;
+        }
     }
 }

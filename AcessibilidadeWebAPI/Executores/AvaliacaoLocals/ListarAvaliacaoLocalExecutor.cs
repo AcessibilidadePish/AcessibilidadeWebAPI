@@ -23,7 +23,7 @@ namespace AcessibilidadeWebAPI.Executores.AvaliacaoLocals
 
         public Task<ListarAvaliacaoLocalResultado> Handle(ListarAvaliacaoLocalRequisicao request, CancellationToken cancellationToken)
         {
-            IQueryable<Entidades.AvaliacaoLocal> arrAvaliacaoLocals = avaliacaoLocalRepositorio.Listar(a => a.IdLocal == request.IdLocal);
+            IQueryable<Entidades.AvaliacaoLocal> arrAvaliacaoLocals = avaliacaoLocalRepositorio.Listar(a => a.LocalId == request.IdLocal);
 
             AvaliacaoLocalDto[] arrAvaliacaoLocalsDto = mapper.ProjectTo<AvaliacaoLocalDto>(arrAvaliacaoLocals).ToArray();
 

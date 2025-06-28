@@ -6,7 +6,7 @@ using AcessibilidadeWebAPI.Dtos.SolicitacaoAjuda;
 using AcessibilidadeWebAPI.Dtos.Usuario;
 using AcessibilidadeWebAPI.Dtos.Voluntario;
 using AcessibilidadeWebAPI.Entidades;
-using AcessibilidadeWebAPI.Migrations;
+using AcessibilidadeWebAPI.Models.Auth;
 using AcessibilidadeWebAPI.Requisicoes.Assistencias;
 using AcessibilidadeWebAPI.Requisicoes.AvaliacaoLocals;
 using AcessibilidadeWebAPI.Requisicoes.Deficiente;
@@ -29,7 +29,7 @@ namespace AcessibilidadeWebAPI.Mapeador
             AddAvaliacaoLocal();
             AddSolicitacaoAjuda();
             AddAssistencia();
-
+            AddAuth();
         }
 
         private void AddUsuario()
@@ -79,6 +79,35 @@ namespace AcessibilidadeWebAPI.Mapeador
             CreateMap<Assistencia, AssistenciaDto>();
             CreateMap<InserirAssistenciaRequisicao, Assistencia>();
             CreateMap<EditarAssistenciaRequisicao, Assistencia>();
+        }
+
+        private void AddAuth()
+        {
+            CreateMap<Usuario, UsuarioInfo>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IdUsuario))
+                .ForMember(dest => dest.TipoUsuario, opt => opt.Ignore())
+                .ForMember(dest => dest.Voluntario, opt => opt.Ignore())
+                .ForMember(dest => dest.Deficiente, opt => opt.Ignore());
+
+            CreateMap<Voluntario, VoluntarioInfo>();
+
+            CreateMap<Deficiente, DeficienteInfo>()
+                .ForMember(dest => dest.TipoDeficiencia, opt => opt.MapFrom(src => (int)src.TipoDeficiencia))
+                .ForMember(dest => dest.TipoDeficienciaDescricao, opt => opt.MapFrom(src => GetTipoDeficienciaDescricao((int)src.TipoDeficiencia)));
+        }
+
+        private string GetTipoDeficienciaDescricao(int tipoDeficiencia)
+        {
+            return tipoDeficiencia switch
+            {
+                1 => "Física",
+                2 => "Visual",
+                3 => "Auditiva",
+                4 => "Cognitiva",
+                5 => "Múltipla",
+                6 => "Outra",
+                _ => "Não especificado"
+            };
         }
     }
 }

@@ -35,55 +35,67 @@ namespace AcessibilidadeWebAPI.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("dataAceite");
 
-                    b.Property<DateTimeOffset>("DataConclusao")
+                    b.Property<DateTimeOffset?>("DataConclusao")
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("dataConclusao");
 
-                    b.Property<int>("IdSolicitacaoAjuda")
+                    b.Property<int?>("DeficienteIdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SolicitacaoAjudaId")
                         .HasColumnType("int")
                         .HasColumnName("idSolicitacaoAjuda");
 
-                    b.Property<int>("IdUsuario")
+                    b.Property<int>("VoluntarioUsuarioId")
                         .HasColumnType("int")
                         .HasColumnName("idUsuario");
 
                     b.HasKey("IdAssistencia");
 
-                    b.HasIndex("IdSolicitacaoAjuda");
+                    b.HasIndex("DeficienteIdUsuario");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("SolicitacaoAjudaId");
+
+                    b.HasIndex("VoluntarioUsuarioId");
 
                     b.ToTable("assistencia", (string)null);
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.AvaliacaoLocal", b =>
                 {
-                    b.Property<int>("IdAvaliacaoLocal")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("idAvaliacaoLocal");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAvaliacaoLocal"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Acessivel")
                         .HasColumnType("bit")
                         .HasColumnName("acessivel");
 
-                    b.Property<int>("IdLocal")
+                    b.Property<int>("DispositivoId")
+                        .HasColumnType("int")
+                        .HasColumnName("idDispositivo");
+
+                    b.Property<int>("LocalId")
                         .HasColumnType("int")
                         .HasColumnName("idLocal");
 
-                    b.Property<string>("Observacao")
+                    b.Property<string>("Observacoes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observacao");
 
-                    b.Property<int>("Timestamp")
-                        .HasColumnType("int")
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2")
                         .HasColumnName("timestamp");
 
-                    b.HasKey("IdAvaliacaoLocal");
+                    b.HasKey("Id");
 
-                    b.HasIndex("IdLocal");
+                    b.HasIndex("DispositivoId");
+
+                    b.HasIndex("LocalId");
 
                     b.ToTable("avaliacaoLocal", (string)null);
                 });
@@ -103,6 +115,67 @@ namespace AcessibilidadeWebAPI.Migrations
                     b.HasIndex(new[] { "IdUsuario" }, "IX_deficiente_idUsuario");
 
                     b.ToTable("deficiente", (string)null);
+                });
+
+            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Dispositivo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataRegistro")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("dataRegistro");
+
+                    b.Property<string>("NumeroSerie")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("numeroSerie");
+
+                    b.Property<int>("UsuarioProprietarioId")
+                        .HasColumnType("int")
+                        .HasColumnName("usuarioProprietarioId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioProprietarioId");
+
+                    b.ToTable("dispositivo", (string)null);
+                });
+
+            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.HistoricoStatusSolicitacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataMudanca")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("dataMudanca");
+
+                    b.Property<int>("SolicitacaoAjudaId")
+                        .HasColumnType("int")
+                        .HasColumnName("solicitacaoAjudaId");
+
+                    b.Property<int>("StatusAnterior")
+                        .HasColumnType("int")
+                        .HasColumnName("statusAnterior");
+
+                    b.Property<int>("StatusAtual")
+                        .HasColumnType("int")
+                        .HasColumnName("statusAtual");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SolicitacaoAjudaId");
+
+                    b.ToTable("historicoStatusSolicitacao", (string)null);
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Local", b =>
@@ -145,22 +218,34 @@ namespace AcessibilidadeWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSolicitacaoAjuda"));
 
-                    b.Property<DateTimeOffset>("DataResposta")
-                        .HasColumnType("datetimeoffset")
+                    b.Property<DateTime?>("DataResposta")
+                        .HasColumnType("datetime2")
                         .HasColumnName("dataResposta");
 
-                    b.Property<DateTimeOffset>("DataSolicitacao")
-                        .HasColumnType("datetimeoffset")
+                    b.Property<DateTime>("DataSolicitacao")
+                        .HasColumnType("datetime2")
                         .HasColumnName("dataSolicitacao");
+
+                    b.Property<int>("DeficienteUsuarioId")
+                        .HasColumnType("int")
+                        .HasColumnName("idUsuario");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("descricao");
 
-                    b.Property<int>("IdUsuario")
-                        .HasColumnType("int")
-                        .HasColumnName("idUsuario");
+                    b.Property<string>("EnderecoReferencia")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("enderecoReferencia");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float")
+                        .HasColumnName("latitude");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float")
+                        .HasColumnName("longitude");
 
                     b.Property<int>("Status")
                         .HasColumnType("int")
@@ -168,7 +253,7 @@ namespace AcessibilidadeWebAPI.Migrations
 
                     b.HasKey("IdSolicitacaoAjuda");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("DeficienteUsuarioId");
 
                     b.ToTable("solicitacaoAjuda", (string)null);
                 });
@@ -212,8 +297,8 @@ namespace AcessibilidadeWebAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnName("idUsuario");
 
-                    b.Property<int>("Avaliacao")
-                        .HasColumnType("int")
+                    b.Property<decimal>("Avaliacao")
+                        .HasColumnType("decimal(3,2)")
                         .HasColumnName("avaliacao");
 
                     b.Property<bool>("Disponivel")
@@ -229,32 +314,44 @@ namespace AcessibilidadeWebAPI.Migrations
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Assistencia", b =>
                 {
-                    b.HasOne("AcessibilidadeWebAPI.Entidades.SolicitacaoAjuda", "IdSolicitacaoAjudaNavigation")
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.Deficiente", null)
                         .WithMany("Assistencias")
-                        .HasForeignKey("IdSolicitacaoAjuda")
+                        .HasForeignKey("DeficienteIdUsuario");
+
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.SolicitacaoAjuda", "SolicitacaoAjudaNavigation")
+                        .WithMany("Assistencias")
+                        .HasForeignKey("SolicitacaoAjudaId")
                         .IsRequired()
                         .HasConstraintName("FK_assistencia_idSolicitacaoAjuda_solicitacaoAjuda_idSolicitacaoAjuda");
 
-                    b.HasOne("AcessibilidadeWebAPI.Entidades.Deficiente", "IdUsuarioNavigation")
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.Voluntario", "VoluntarioUsuarioNavigation")
                         .WithMany("Assistencias")
-                        .HasForeignKey("IdUsuario")
+                        .HasForeignKey("VoluntarioUsuarioId")
                         .IsRequired()
-                        .HasConstraintName("FK_assistencia_idUsuario_deficiente_idUsuario");
+                        .HasConstraintName("FK_assistencia_idUsuario_voluntario_idUsuario");
 
-                    b.Navigation("IdSolicitacaoAjudaNavigation");
+                    b.Navigation("SolicitacaoAjudaNavigation");
 
-                    b.Navigation("IdUsuarioNavigation");
+                    b.Navigation("VoluntarioUsuarioNavigation");
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.AvaliacaoLocal", b =>
                 {
-                    b.HasOne("AcessibilidadeWebAPI.Entidades.Local", "IdLocalNavigation")
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.Dispositivo", "DispositivoNavigation")
                         .WithMany("AvaliacaoLocals")
-                        .HasForeignKey("IdLocal")
+                        .HasForeignKey("DispositivoId")
+                        .IsRequired()
+                        .HasConstraintName("FK_avaliacaoLocal_idDispositivo_dispositivo_id");
+
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.Local", "LocalNavigation")
+                        .WithMany("AvaliacaoLocals")
+                        .HasForeignKey("LocalId")
                         .IsRequired()
                         .HasConstraintName("FK_avaliacaoLocal_idLocal_local_idLocal");
 
-                    b.Navigation("IdLocalNavigation");
+                    b.Navigation("DispositivoNavigation");
+
+                    b.Navigation("LocalNavigation");
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Deficiente", b =>
@@ -268,15 +365,37 @@ namespace AcessibilidadeWebAPI.Migrations
                     b.Navigation("IdUsuarioNavigation");
                 });
 
+            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Dispositivo", b =>
+                {
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.Usuario", "UsuarioProprietarioNavigation")
+                        .WithMany("Dispositivos")
+                        .HasForeignKey("UsuarioProprietarioId")
+                        .IsRequired()
+                        .HasConstraintName("FK_dispositivo_usuarioProprietarioId_usuario_idUsuario");
+
+                    b.Navigation("UsuarioProprietarioNavigation");
+                });
+
+            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.HistoricoStatusSolicitacao", b =>
+                {
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.SolicitacaoAjuda", "SolicitacaoAjudaNavigation")
+                        .WithMany("HistoricoStatusSolicitacao")
+                        .HasForeignKey("SolicitacaoAjudaId")
+                        .IsRequired()
+                        .HasConstraintName("FK_historicoStatusSolicitacao_solicitacaoAjudaId_solicitacaoAjuda_idSolicitacaoAjuda");
+
+                    b.Navigation("SolicitacaoAjudaNavigation");
+                });
+
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.SolicitacaoAjuda", b =>
                 {
-                    b.HasOne("AcessibilidadeWebAPI.Entidades.Deficiente", "IdUsuarioNavigation")
+                    b.HasOne("AcessibilidadeWebAPI.Entidades.Deficiente", "DeficienteUsuarioNavigation")
                         .WithMany("SolicitacaoAjudas")
-                        .HasForeignKey("IdUsuario")
+                        .HasForeignKey("DeficienteUsuarioId")
                         .IsRequired()
                         .HasConstraintName("FK_solicitacaoAjudae_idUsuario_deficiente_idUsuario");
 
-                    b.Navigation("IdUsuarioNavigation");
+                    b.Navigation("DeficienteUsuarioNavigation");
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Voluntario", b =>
@@ -297,6 +416,11 @@ namespace AcessibilidadeWebAPI.Migrations
                     b.Navigation("SolicitacaoAjudas");
                 });
 
+            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Dispositivo", b =>
+                {
+                    b.Navigation("AvaliacaoLocals");
+                });
+
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Local", b =>
                 {
                     b.Navigation("AvaliacaoLocals");
@@ -305,13 +429,22 @@ namespace AcessibilidadeWebAPI.Migrations
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.SolicitacaoAjuda", b =>
                 {
                     b.Navigation("Assistencias");
+
+                    b.Navigation("HistoricoStatusSolicitacao");
                 });
 
             modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Usuario", b =>
                 {
                     b.Navigation("Deficientes");
 
+                    b.Navigation("Dispositivos");
+
                     b.Navigation("Voluntarios");
+                });
+
+            modelBuilder.Entity("AcessibilidadeWebAPI.Entidades.Voluntario", b =>
+                {
+                    b.Navigation("Assistencias");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Detectar se está no Windows e usar PowerShell se necessário
+if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]] || [[ -n "$WINDIR" ]]; then
+    echo "🪟 Detectado Windows - usando PowerShell..."
+    powershell.exe -ExecutionPolicy Bypass -File ".git/hooks/pre-push.ps1"
+    exit $?
+fi
+
+echo "🔍 Git Pre-Push Hook - AcessibilidadeWebAPI"
+echo "=========================================="
+
+# Cores para output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}📦 Executando build do projeto...${NC}"
+
+# Executar build do projeto principal
+dotnet build AcessibilidadeWebAPI/AcessibilidadeWebAPI.csproj --configuration Release --no-restore
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ ERRO: Build do projeto principal falhou!${NC}"
+    echo -e "${RED}❌ Push cancelado. Corrija os erros de compilação antes de continuar.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Build do projeto principal: SUCESSO${NC}"
+
+# Executar build do projeto de testes
+echo -e "${BLUE}🧪 Executando build do projeto de testes...${NC}"
+
+dotnet build AcessibilidadeWebAPI.Tests/AcessibilidadeWebAPI.Tests.csproj --configuration Release --no-restore
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ ERRO: Build do projeto de testes falhou!${NC}"
+    echo -e "${RED}❌ Push cancelado. Corrija os erros de compilação nos testes.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Build do projeto de testes: SUCESSO${NC}"
+
+# Executar testes
+echo -e "${BLUE}🔬 Executando testes...${NC}"
+
+dotnet test AcessibilidadeWebAPI.Tests --configuration Release --no-build --verbosity minimal
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ ERRO: Alguns testes falharam!${NC}"
+    echo -e "${RED}❌ Push cancelado. Corrija os testes que estão falhando.${NC}"
+    echo -e "${YELLOW}💡 Dica: Execute 'dotnet test --verbosity normal' para ver detalhes dos erros${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Todos os testes: SUCESSO${NC}"
+
+# Validar especificamente os testes da correção DataConclusao
+echo -e "${BLUE}🎯 Validando correção DataConclusao...${NC}"
+
+dotnet test AcessibilidadeWebAPI.Tests --filter "DataConclusao" --configuration Release --no-build --verbosity minimal
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ ERRO: Testes da correção DataConclusao falharam!${NC}"
+    echo -e "${RED}❌ Push cancelado. A correção principal está com problemas.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Correção DataConclusao: VALIDADA${NC}"
+
+# Sucesso final
+echo ""
+echo -e "${GREEN}🎉 PRE-PUSH VALIDATION: SUCESSO TOTAL!${NC}"
+echo -e "${GREEN}✅ Build: OK${NC}"
+echo -e "${GREEN}✅ Testes: OK${NC}"
+echo -e "${GREEN}✅ Correção DataConclusao: OK${NC}"
+echo ""
+echo -e "${BLUE}🚀 Push autorizado! Código está pronto para produção.${NC}"
+echo ""
+
+exit 0 

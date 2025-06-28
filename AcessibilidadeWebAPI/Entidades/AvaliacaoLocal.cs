@@ -1,13 +1,14 @@
 ﻿namespace AcessibilidadeWebAPI.Entidades
 {
-    public class AvaliacaoLocal
+    public partial class AvaliacaoLocal
     {
-        public int IdAvaliacaoLocal { get; set; }
-        public int IdLocal { get; set; }
-        public bool Acessivel {  get; set; }
-        public string Observacao {  get; set; }
-
-        public int Timestamp { get; set; }
-        public virtual Local IdLocalNavigation { get; set; }
+        public int Id { get; set; }
+        public int LocalId { get; set; }
+        public int DispositivoId { get; set; }
+        public bool Acessivel { get; set; }
+        public string Observacoes { get; set; }
+        public DateTime Timestamp { get; set; }
+        public virtual Local LocalNavigation { get; set; }
+        public virtual Dispositivo DispositivoNavigation { get; set; }
     }
 }
