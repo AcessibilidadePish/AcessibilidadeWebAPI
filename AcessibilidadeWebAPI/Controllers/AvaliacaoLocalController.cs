@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AcessibilidadeWebAPI.Controllers
 {
-    public class AvaliacaoAvaliacaoLocalController : ApiController
+    public class AvaliacaoLocalController : ApiController
     {
         /// <summary>
         /// ObterAvaliacaoLocal

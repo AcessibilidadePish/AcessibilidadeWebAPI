@@ -49,8 +49,8 @@ namespace AcessibilidadeWebAPI.Mapeador
         private void AddDeficiente()
         {
             CreateMap<Deficiente, DeficienteDto>();
-            CreateMap<InserirDeficienteRequisicao, Voluntario>();
-            CreateMap<EditarDeficienteRequisicao, Voluntario>();
+            CreateMap<InserirDeficienteRequisicao, Deficiente>();
+            CreateMap<EditarDeficienteRequisicao, Deficiente>();
         }
 
         private void AddLocal()
