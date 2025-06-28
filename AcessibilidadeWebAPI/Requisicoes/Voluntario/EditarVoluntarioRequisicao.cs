@@ -7,6 +7,6 @@ namespace AcessibilidadeWebAPI.Requisicoes.Voluntario
     {
         public int IdUsuario { get; set; }
         public bool Disponivel { get; set; }
-        public int Avaliacao { get; set; }
+        public decimal Avaliacao { get; set; }
     }
 }
