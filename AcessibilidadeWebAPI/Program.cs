@@ -66,7 +66,8 @@ namespace AcessibilidadeWebAPI
             builder.Services.AddScoped<IAssistenciaRepositorio, AssistenciaRepositorio>();
 
 
-            string connectionString = builder.Configuration.GetSection("ConnectionStringOptions")["ConnectionString"];
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                ?? builder.Configuration.GetSection("ConnectionStringOptions")["ConnectionString"];
             builder.Services.AddDbContext<AcessibilidadeDbContext>(options =>
             {
                 options.UseLazyLoadingProxies()
@@ -85,9 +86,14 @@ namespace AcessibilidadeWebAPI
             Assembly[] assemblies = (new[] { entryAssembly, Assembly.GetExecutingAssembly() }).Distinct().ToArray();
             builder.Services.AddAutoMapper(assemblies);
 
-            // Configuração JWT
-            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"];
+            // Configuração JWT - compatível com ambos os formatos (JwtSettings ou Jwt)
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings").Exists() 
+                ? builder.Configuration.GetSection("JwtSettings") 
+                : builder.Configuration.GetSection("Jwt");
+            
+            var secretKey = jwtSettings["SecretKey"] ?? jwtSettings["Key"] ?? "defaultSecretKeyForDevelopment123!";
+            var issuer = jwtSettings["Issuer"] ?? "https://localhost:7139";
+            var audience = jwtSettings["Audience"] ?? "https://localhost:7139";
 
             builder.Services.AddAuthentication(options =>
             {
@@ -102,8 +108,8 @@ namespace AcessibilidadeWebAPI
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                     ClockSkew = TimeSpan.Zero
                 };
@@ -113,12 +119,34 @@ namespace AcessibilidadeWebAPI
 
             WebApplication app = builder.Build();
 
+            // Aplicar migrações automaticamente (útil para produção)
+            using (var scope = app.Services.CreateScope())
+            {
+                try
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AcessibilidadeDbContext>();
+                    dbContext.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "Erro ao aplicar migrações do banco de dados");
+                }
+            }
+
             // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
             app.UseSwagger();
-            app.UseSwaggerUI();
-            //}
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "AcessibilidadeWebAPI v1");
+                c.RoutePrefix = app.Environment.IsDevelopment() ? "swagger" : string.Empty; // Em produção, Swagger na raiz
+            });
+
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
 
@@ -126,6 +154,11 @@ namespace AcessibilidadeWebAPI
             app.UseAuthorization();
 
             app.MapControllers();
+
+            // Log de inicialização
+            var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
+            startupLogger.LogInformation($"Aplicação iniciada no ambiente: {app.Environment.EnvironmentName}");
+            startupLogger.LogInformation($"URLs: {string.Join(", ", builder.WebHost.GetSetting(WebHostDefaults.ServerUrlsKey)?.Split(';') ?? new[] { "N/A" })}");
 
             app.Run();
 
