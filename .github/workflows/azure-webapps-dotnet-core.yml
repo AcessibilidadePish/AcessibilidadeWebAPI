@@ -65,9 +65,8 @@ jobs:
           dotnet publish AcessibilidadeWebAPI/AcessibilidadeWebAPI.csproj \
             -c Release \
             -o published \
-            --no-restore \
-            --self-contained false \
-            --runtime linux-x64
+            --no-build \
+            --self-contained false
 
       # Lista arquivos publicados para debug
       - name: List published files
