@@ -68,6 +68,12 @@ jobs:
             --no-build \
             --self-contained false
 
+      # Copia arquivo de startup para pasta publicada
+      - name: Copy startup script
+        run: |
+          cp startup.sh published/
+          chmod +x published/startup.sh
+
       # Lista arquivos publicados para debug
       - name: List published files
         run: |
@@ -75,6 +81,8 @@ jobs:
           ls -la published/
           echo "📝 Verificando arquivos runtimeconfig:"
           find published -name "*.runtimeconfig.json" -type f
+          echo "📝 Verificando startup.sh:"
+          ls -la published/startup.sh || echo "startup.sh não encontrado"
 
       # Faz o deploy para o Azure App Service
       - name: Deploy to Azure Web App
