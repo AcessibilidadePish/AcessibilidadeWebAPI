@@ -8,19 +8,7 @@
 
   <!-- 🔧 Configuração automática de Git Hooks -->
   <Target Name="SetupGitHooks" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Debug'">
-    <Message Text="🔧 Verificando configuração dos Git Hooks..." Importance="high" />
-    
-    <!-- Windows -->
-    <Exec Command="setup-hooks.bat" 
-          Condition="'$(OS)' == 'Windows_NT'" 
-          ContinueOnError="true" 
-          WorkingDirectory="$(ProjectDir)..\" />
-    
-    <!-- Linux/Mac -->
-    <Exec Command="chmod +x setup-hooks.sh &amp;&amp; ./setup-hooks.sh" 
-          Condition="'$(OS)' != 'Windows_NT'" 
-          ContinueOnError="true" 
-          WorkingDirectory="$(ProjectDir)..\" />
+    <Exec Command="setup-hooks.bat" />
   </Target>
 
   <ItemGroup>
