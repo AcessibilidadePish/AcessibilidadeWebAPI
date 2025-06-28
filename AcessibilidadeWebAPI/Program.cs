@@ -119,6 +119,14 @@ namespace AcessibilidadeWebAPI
 
             WebApplication app = builder.Build();
 
+            app.UseCors(corsPolicyBuilder =>
+            {
+                corsPolicyBuilder
+                    .AllowAnyOrigin() // Permitir qualquer origem (ajuste conforme necessário)
+                    .AllowAnyMethod() // Permitir qualquer método HTTP (GET, POST, etc.)
+                    .AllowAnyHeader(); // Permitir qualquer cabeçalho
+            });
+
             // Aplicar migrações automaticamente (útil para produção)
             using (var scope = app.Services.CreateScope())
             {
