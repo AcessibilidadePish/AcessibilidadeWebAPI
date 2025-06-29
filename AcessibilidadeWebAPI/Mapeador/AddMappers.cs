@@ -83,7 +83,7 @@ namespace AcessibilidadeWebAPI.Mapeador
                 .ForMember(dest => dest.Longitude, destinationMember => destinationMember.MapFrom(src => src.Longitude))
                 .ForMember(dest => dest.EnderecoReferencia, destinationMember => destinationMember.MapFrom(src => src.EnderecoReferencia))
                 .ForMember(dest => dest.DeficienteUsuarioId, destinationMember => destinationMember.MapFrom(src => src.IdUsuario));
-            CreateMap<EditarSolicitacaoAjudaRequisicao, SolicitacaoAjuda>();
+
         }
 
         private void AddAssistencia()

@@ -1,6 +1,8 @@
 ﻿using AcessibilidadeWebAPI.Models.Assistencias;
 using AcessibilidadeWebAPI.Models.Auth;
 using AcessibilidadeWebAPI.Models.SolicitacaoAjudas;
+using AcessibilidadeWebAPI.Repositorios.Assistencias;
+using AcessibilidadeWebAPI.Repositorios.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Requisicoes.Assistencias;
 using AcessibilidadeWebAPI.Requisicoes.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Resultados.Assistencias;
@@ -17,6 +19,15 @@ namespace AcessibilidadeWebAPI.Controllers
     [Route("api/solicitacoes")]
     public class SolicitacaoAjudaController : ApiController
     {
+        private readonly ISolicitacaoAjudaRepositorio solicitacaoAjudaRepositorio;
+        private readonly IAssistenciaRepositorio assistenciaRepositorio;
+
+        public SolicitacaoAjudaController(ISolicitacaoAjudaRepositorio solicitacaoAjudaRepositorio, IAssistenciaRepositorio assistenciaRepositorio)
+        {
+            this.solicitacaoAjudaRepositorio = solicitacaoAjudaRepositorio;
+            this.assistenciaRepositorio = assistenciaRepositorio;
+        }
+
         /// <summary>
         /// Criar nova solicitação de ajuda (apenas deficientes autenticados)
         /// </summary>
@@ -131,6 +142,75 @@ namespace AcessibilidadeWebAPI.Controllers
                 };
 
                 return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Concluir uma solicitação de ajuda (deficiente marca como finalizada)
+        /// </summary>
+        /// <param name="solicitacaoId">ID da solicitação a ser concluída</param>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("{solicitacaoId}/concluir")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> ConcluirSolicitacao(int solicitacaoId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Primeiro, buscar a solicitação para verificar se existe e se pertence ao usuário
+                ObterSolicitacaoAjudaRequisicao obterRequisicao = new ObterSolicitacaoAjudaRequisicao()
+                {
+                    IdSolicitacaoAjuda = solicitacaoId,
+                };
+
+                ObterSolicitacaoAjudaResultado obterResultado = await Mediator.Send(obterRequisicao, cancellationToken);
+
+                if (obterResultado.SolicitacaoAjuda == null)
+                {
+                    return NotFound(new { message = "Solicitação não encontrada" });
+                }
+
+
+                // Verificar se a solicitação já foi concluída
+                if (obterResultado.SolicitacaoAjuda.Status == StatusSolicitacao.Concluída)
+                {
+                    return BadRequest(new { message = "Solicitação já foi concluída" });
+                }
+
+                var solicitacao = solicitacaoAjudaRepositorio.ObterPorId(solicitacaoId);
+
+                if (solicitacao == null)
+                {
+                    return NotFound(new { message = "Solicitação não encontrada" });
+                }
+
+                solicitacao.Status = StatusSolicitacao.Concluída; // Marca como concluída
+
+                var assistencias = assistenciaRepositorio.Listar(a => a.SolicitacaoAjudaId == solicitacaoId).ToList();
+
+                if (assistencias.Count == 0)
+                {
+                    return BadRequest(new { message = "Não há assistências associadas a esta solicitação" });
+                }
+
+                // Atualizar a data de conclusão para todas as assistências
+                foreach (var assistencia in assistencias)
+                {
+                    assistencia.DataConclusao = DateTime.UtcNow; // Define a data de conclusão
+                    assistenciaRepositorio.Editar(assistencia); // Atualiza a assistência
+                }
+
+                return Ok(new { 
+                    message = "Solicitação concluída com sucesso",
+                    solicitacaoId = solicitacaoId,
+                    status = "Concluída"
+                });
             }
             catch (Exception ex)
             {

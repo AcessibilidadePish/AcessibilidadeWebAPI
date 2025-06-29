@@ -21,7 +21,6 @@ namespace AcessibilidadeWebAPI.Executores.SolicitacaoAjudas
         {
             Entidades.SolicitacaoAjuda SolicitacaoAjuda = solicitacaoAjudaRepositorio.ObterPorId(request.IdSolicitacaoAjuda);
 
-            mapper.Map(request, SolicitacaoAjuda);
             solicitacaoAjudaRepositorio.Editar(SolicitacaoAjuda);
 
             return Task.FromResult(new EditarSolicitacaoAjudaResultado()

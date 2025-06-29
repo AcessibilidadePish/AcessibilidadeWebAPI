@@ -1,10 +1,11 @@
-﻿
-using AcessibilidadeWebAPI.Models.Assistencias;
+﻿using AcessibilidadeWebAPI.Models.Assistencias;
 using AcessibilidadeWebAPI.Models.Auth;
+using AcessibilidadeWebAPI.Repositorios.Assistencias;
+using AcessibilidadeWebAPI.Repositorios.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Requisicoes.Assistencias;
 using AcessibilidadeWebAPI.Resultados.Assistencias;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace AcessibilidadeWebAPI.Controllers
@@ -15,6 +16,14 @@ namespace AcessibilidadeWebAPI.Controllers
     [Route("api/assistencias")]
     public class AssistenciaController : ApiController
     {
+        private readonly ISolicitacaoAjudaRepositorio solicitacaoAjudaRepositorio;
+        private readonly IAssistenciaRepositorio assistenciaRepositorio;
+
+        public AssistenciaController(ISolicitacaoAjudaRepositorio solicitacaoAjudaRepositorio, IAssistenciaRepositorio assistenciaRepositorio)
+        {
+            this.solicitacaoAjudaRepositorio = solicitacaoAjudaRepositorio;
+            this.assistenciaRepositorio = assistenciaRepositorio;
+        }
         /// <summary>
         /// Aceitar uma solicitação de ajuda (voluntários autenticados)
         /// </summary>
@@ -138,6 +147,39 @@ namespace AcessibilidadeWebAPI.Controllers
         }
 
         /// <summary>
+        /// Concluir uma assistência (voluntário marca como finalizada)
+        /// </summary>
+        /// <param name="assistenciaId">ID da assistência a ser concluída</param>
+        /// <param name="cancellationToken"></param>
+        [HttpPost("{assistenciaId}/concluir")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> ConcluirAssistencia(int assistenciaId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var assistancia = assistenciaRepositorio.ObterPorId(assistenciaId);
+                assistancia.DataConclusao = DateTime.UtcNow; // Define a data de conclusão
+                assistenciaRepositorio.Editar(assistancia); // Atualiza a assistência
+                var solicitacao = solicitacaoAjudaRepositorio.ObterPorId(assistancia.SolicitacaoAjudaId);
+                solicitacao.Status = StatusSolicitacao.Concluída;
+                solicitacaoAjudaRepositorio.Editar(solicitacao); // Atualiza a solicitação de ajuda
+
+                return Ok(new { 
+                    message = "Assistência concluída com sucesso",
+                    assistenciaId = assistenciaId,
+                    dataConclusao = DateTimeOffset.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
+
+        /// <summary>m
         /// Excluir Assistencia
         /// </summary>
         /// <remarks> Excluir Assistencia </remarks>

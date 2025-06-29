@@ -176,6 +176,34 @@ namespace AcessibilidadeWebAPI.Controllers
         }
 
         /// <summary>
+        /// Obter informações de um usuário específico por ID
+        /// </summary>
+        /// <param name="userId">ID do usuário</param>
+        /// <returns></returns>
+        [HttpGet("usuario/{userId}")]
+        public async Task<ActionResult<UsuarioInfo>> GetUserById(int userId)
+        {
+            try
+            {
+                Entidades.Usuario usuario = await _usuarioRepositorio.ObterUsuario(userId);
+
+                if (usuario == null)
+                {
+                    return NotFound(new { message = "Usuário não encontrado" });
+                }
+
+                // Criar UsuarioInfo completo com informações específicas
+                UsuarioInfo usuarioInfo = await CriarUsuarioInfoCompleto(usuario);
+
+                return Ok(usuarioInfo);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor", error = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Atualizar perfil do usuário autenticado
         /// </summary>
         /// <param name="updateRequest"></param>
