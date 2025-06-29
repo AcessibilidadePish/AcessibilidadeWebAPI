@@ -8,7 +8,6 @@ namespace AcessibilidadeWebAPI.Requisicoes.AvaliacaoLocals
         public int IdLocal { get; set; }
         public bool Acessivel { get; set; }
         public string Observacao { get; set; }
-
-        public int Timestamp { get; set; }
+        public int IdUsuario { get; set; }
     }
 }

@@ -3,16 +3,17 @@ using AcessibilidadeWebAPI.BancoDados;
 using AcessibilidadeWebAPI.Repositorios.Assistencias;
 using AcessibilidadeWebAPI.Repositorios.AvaliacaoAvaliacaoLocals;
 using AcessibilidadeWebAPI.Repositorios.Deficientes;
+using AcessibilidadeWebAPI.Repositorios.Dispositivos;
 using AcessibilidadeWebAPI.Repositorios.Locals;
 using AcessibilidadeWebAPI.Repositorios.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Repositorios.Voluntarios;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Azure.Devices;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 namespace AcessibilidadeWebAPI
@@ -64,6 +65,7 @@ namespace AcessibilidadeWebAPI
             builder.Services.AddScoped<IAvaliacaoLocalRepositorio, AvaliacaoLocalRepositorio>();
             builder.Services.AddScoped<ISolicitacaoAjudaRepositorio, SolicitacaoAjudaRepositorio>();
             builder.Services.AddScoped<IAssistenciaRepositorio, AssistenciaRepositorio>();
+            builder.Services.AddScoped<IDispositivoRepositorio, DispositivoRepositorio>();
 
 
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 

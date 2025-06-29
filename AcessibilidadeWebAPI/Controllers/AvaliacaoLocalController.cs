@@ -2,6 +2,7 @@
 using AcessibilidadeWebAPI.Requisicoes.AvaliacaoLocals;
 using AcessibilidadeWebAPI.Resultados.AvaliacaoLocals;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AcessibilidadeWebAPI.Controllers
 {
@@ -93,12 +94,23 @@ namespace AcessibilidadeWebAPI.Controllers
         [ProducesResponseType(typeof(InserirAvaliacaoLocalOutput), StatusCodes.Status200OK)]
         public async Task<ObjectResult> InserirAvaliacaoLocal(InserirAvaliacaoLocalInput input, CancellationToken cancellationToken)
         {
+            Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return new ObjectResult(new { Error = "Usuário não autenticado." })
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                };
+            }
+
+            int userId = int.Parse(userIdClaim.Value);
+
             InserirAvaliacaoLocalRequisicao requisicao = new InserirAvaliacaoLocalRequisicao()
             {
                 IdLocal = input.IdLocal,
                 Acessivel = input.Acessivel,
                 Observacao = input.Observacao,
-                Timestamp = input.Timestamp
+                IdUsuario = userId,
             };
 
             InserirAvaliacaoLocalResultado resultado = await Mediator.Send(requisicao, cancellationToken);

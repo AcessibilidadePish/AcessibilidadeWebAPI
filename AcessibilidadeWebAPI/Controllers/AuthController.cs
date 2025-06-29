@@ -1,5 +1,6 @@
 using AcessibilidadeWebAPI.Models.Auth;
 using AcessibilidadeWebAPI.Repositorios.Deficientes;
+using AcessibilidadeWebAPI.Repositorios.Dispositivos;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Repositorios.Voluntarios;
 using AutoMapper;
@@ -20,16 +21,18 @@ namespace AcessibilidadeWebAPI.Controllers
         private readonly IUsuarioRepositorio _usuarioRepositorio;
         private readonly IVoluntarioRepositorio _voluntarioRepositorio;
         private readonly IDeficienteRepositorio _deficienteRepositorio;
+        private readonly IDispositivoRepositorio _dispositivoRepositorio;
         private readonly IMapper _mapper;
 
         public AuthController(IConfiguration configuration, IUsuarioRepositorio usuarioRepositorio,
-            IVoluntarioRepositorio voluntarioRepositorio, IDeficienteRepositorio deficienteRepositorio, IMapper mapper)
+            IVoluntarioRepositorio voluntarioRepositorio, IDeficienteRepositorio deficienteRepositorio, IMapper mapper, IDispositivoRepositorio dispositivoRepositorio)
         {
             _configuration = configuration;
             _usuarioRepositorio = usuarioRepositorio;
             _voluntarioRepositorio = voluntarioRepositorio;
             _deficienteRepositorio = deficienteRepositorio;
             _mapper = mapper;
+            _dispositivoRepositorio = dispositivoRepositorio;
         }
 
         /// <summary>
@@ -108,6 +111,15 @@ namespace AcessibilidadeWebAPI.Controllers
                 // Criar registro específico baseado no tipo de usuário
                 await CriarRegistroEspecifico(novoUsuario.IdUsuario, registerRequest);
 
+                Entidades.Dispositivo dispositivo = new Entidades.Dispositivo
+                {
+                    DataRegistro = DateTime.UtcNow,
+                    NumeroSerie = registerRequest.NumeroSerie,
+                    UsuarioProprietarioId = novoUsuario.IdUsuario
+                };
+
+                _dispositivoRepositorio.Inserir(dispositivo);
+
                 // Gerar token JWT
                 string token = GerarTokenJWT(novoUsuario.IdUsuario, novoUsuario.Email, novoUsuario.Nome);
 
@@ -128,7 +140,7 @@ namespace AcessibilidadeWebAPI.Controllers
             }
         }
 
-                /// <summary>
+        /// <summary>
         /// Obter informações do usuário autenticado
         /// </summary>
         /// <returns></returns>
@@ -154,7 +166,7 @@ namespace AcessibilidadeWebAPI.Controllers
 
                 // Criar UsuarioInfo completo com informações específicas
                 UsuarioInfo usuarioInfo = await CriarUsuarioInfoCompleto(usuario);
-                
+
                 return Ok(usuarioInfo);
             }
             catch (Exception ex)
@@ -192,7 +204,7 @@ namespace AcessibilidadeWebAPI.Controllers
                 usuario.Nome = updateRequest.Nome ?? usuario.Nome;
                 usuario.Email = updateRequest.Email ?? usuario.Email;
                 usuario.Telefone = updateRequest.Telefone ?? usuario.Telefone;
-                
+
                 if (!string.IsNullOrEmpty(updateRequest.NovaSenha))
                 {
                     // TODO: Implementar hash da senha em produção
@@ -226,7 +238,7 @@ namespace AcessibilidadeWebAPI.Controllers
                 }
 
                 int userId = int.Parse(userIdClaim.Value);
-                
+
                 // TODO: Implementar deleção em cascata dos perfis específicos
                 _usuarioRepositorio.Deletar(userId);
 

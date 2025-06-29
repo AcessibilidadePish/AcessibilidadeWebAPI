@@ -22,6 +22,14 @@ namespace AcessibilidadeWebAPI.BancoDados.Mapeamento
 
             builder.Property(e => e.DataAceite).HasColumnName("dataAceite");
 
+            builder.Property(e => e.DeficienteIdUsuario).HasColumnName("deficienteIdUsuario");
+
+            builder.HasOne(d => d.DeficienteUsuarioNavigation)
+               .WithMany(p => p.Assistencias)
+               .HasForeignKey(d => d.DeficienteIdUsuario)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FK_assistencia_deficiente_idUsuario_deficiente_idUsuario");
+
             builder.HasOne(d => d.VoluntarioUsuarioNavigation)
                .WithMany(p => p.Assistencias)
                .HasForeignKey(d => d.VoluntarioUsuarioId)

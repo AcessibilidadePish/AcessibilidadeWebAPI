@@ -26,6 +26,8 @@ namespace AcessibilidadeWebAPI.Models.Auth
 
         // Campo opcional: só preenchido se TipoUsuario = Voluntario  
         public bool? Disponivel { get; set; } = true;
+
+        public string NumeroSerie { get; set; } = null;
     }
 
     public enum TipoUsuario

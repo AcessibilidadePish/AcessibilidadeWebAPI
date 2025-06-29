@@ -42,8 +42,6 @@ namespace AcessibilidadeWebAPI.Controllers
                 {
                     IdUsuario = userId,
                     Descricao = input.Descricao,
-                    DataSolicitacao = DateTime.UtcNow,
-                    Status = 1, // StatusSolicitacao.Pendente
                     Latitude = input.Latitude,
                     Longitude = input.Longitude,
                     EnderecoReferencia = input.EnderecoReferencia
@@ -167,17 +165,17 @@ namespace AcessibilidadeWebAPI.Controllers
 
                 // Filtrar apenas as pendentes e calcular distâncias
                 var solicitacoesComDistancia = resultado.ArrSolicitacaoAjuda
-                    .Where(s => (int)s.Status == 1) // StatusSolicitacao.Pendente
+                    .Where(s => s.Status == StatusSolicitacao.Pendente) // StatusSolicitacao.Pendente
                     .Select(s => new SolicitacaoComDistancia
                     {
                         IdSolicitacaoAjuda = s.IdSolicitacaoAjuda,
                         DeficienteUsuarioId = s.DeficienteUsuarioId,
                         Descricao = s.Descricao,
                         DataSolicitacao = s.DataSolicitacao,
-                        Latitude = null, // Será atualizado quando o DTO for corrigido
-                        Longitude = null, // Será atualizado quando o DTO for corrigido
-                        EnderecoReferencia = null, // Será atualizado quando o DTO for corrigido
-                        DistanciaKm = CalcularDistancia(latitude, longitude, null, null)
+                        Latitude = s.Latitude, // Será atualizado quando o DTO for corrigido
+                        Longitude = s.Longitude, // Será atualizado quando o DTO for corrigido
+                        EnderecoReferencia = s.EnderecoReferencia, // Será atualizado quando o DTO for corrigido
+                        DistanciaKm = CalcularDistancia(latitude, longitude, s.Latitude, s.Longitude)
                     })
                     .Where(s => s.DistanciaKm <= raioKm || s.DistanciaKm == -1) // -1 = sem localização
                     .OrderBy(s => s.DistanciaKm == -1 ? double.MaxValue : s.DistanciaKm)
@@ -291,9 +289,10 @@ namespace AcessibilidadeWebAPI.Controllers
             InserirSolicitacaoAjudaRequisicao requisicao = new InserirSolicitacaoAjudaRequisicao()
             {
                 IdUsuario= input.IdUsuario,
-                DataSolicitacao = input.DataSolicitacao,
-                Status = input.Status,
-                Descricao = input.Descricao
+                Descricao = input.Descricao,
+                EnderecoReferencia = input.EnderecoReferencia,
+                Latitude = input.Latitude,
+                Longitude = input.Longitude
             };
 
             InserirSolicitacaoAjudaResultado resultado = await Mediator.Send(requisicao, cancellationToken);

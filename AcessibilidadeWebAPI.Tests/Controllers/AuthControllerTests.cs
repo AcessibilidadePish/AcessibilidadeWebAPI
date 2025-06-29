@@ -1,15 +1,15 @@
-using Xunit;
-using Moq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using FluentAssertions;
 using AcessibilidadeWebAPI.Controllers;
+using AcessibilidadeWebAPI.Entidades;
+using AcessibilidadeWebAPI.Models.Auth;
+using AcessibilidadeWebAPI.Repositorios.Deficientes;
+using AcessibilidadeWebAPI.Repositorios.Dispositivos;
 using AcessibilidadeWebAPI.Repositorios.Usuarios;
 using AcessibilidadeWebAPI.Repositorios.Voluntarios;
-using AcessibilidadeWebAPI.Repositorios.Deficientes;
-using AcessibilidadeWebAPI.Models.Auth;
-using AcessibilidadeWebAPI.Entidades;
 using AutoMapper;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Moq;
 
 namespace AcessibilidadeWebAPI.Tests.Controllers
 {
@@ -19,6 +19,7 @@ namespace AcessibilidadeWebAPI.Tests.Controllers
         private readonly Mock<IUsuarioRepositorio> _mockUsuarioRepositorio;
         private readonly Mock<IVoluntarioRepositorio> _mockVoluntarioRepositorio;
         private readonly Mock<IDeficienteRepositorio> _mockDeficienteRepositorio;
+        private readonly Mock<IDispositivoRepositorio> _mockDispositivoRepositorio; 
         private readonly Mock<IMapper> _mockMapper;
         private readonly AuthController _authController;
 
@@ -28,6 +29,7 @@ namespace AcessibilidadeWebAPI.Tests.Controllers
             _mockUsuarioRepositorio = new Mock<IUsuarioRepositorio>();
             _mockVoluntarioRepositorio = new Mock<IVoluntarioRepositorio>();
             _mockDeficienteRepositorio = new Mock<IDeficienteRepositorio>();
+            _mockDispositivoRepositorio = new Mock<IDispositivoRepositorio>(); 
             _mockMapper = new Mock<IMapper>();
             
             // Configurar mock do IConfiguration para JWT
@@ -68,8 +70,14 @@ namespace AcessibilidadeWebAPI.Tests.Controllers
                 
             _mockDeficienteRepositorio.Setup(x => x.Listar(It.IsAny<System.Linq.Expressions.Expression<Func<Deficiente, bool>>>(), It.IsAny<bool>()))
                 .Returns(new List<Deficiente>().AsQueryable());
-            
-            _authController = new AuthController(_mockConfiguration.Object, _mockUsuarioRepositorio.Object, _mockVoluntarioRepositorio.Object, _mockDeficienteRepositorio.Object, _mockMapper.Object);
+
+            _mockDispositivoRepositorio.Setup(x => x.Listar(It.IsAny<System.Linq.Expressions.Expression<Func<Dispositivo, bool>>>(), It.IsAny<bool>()))
+                .Returns(new List<Dispositivo>().AsQueryable());
+
+            _mockDispositivoRepositorio.Setup(x=>x.Inserir(It.IsAny<Dispositivo>()))
+                .Returns((Dispositivo d) => d);
+
+            _authController = new AuthController(_mockConfiguration.Object, _mockUsuarioRepositorio.Object, _mockVoluntarioRepositorio.Object, _mockDeficienteRepositorio.Object, _mockMapper.Object, _mockDispositivoRepositorio.Object);
         }
 
         [Fact]

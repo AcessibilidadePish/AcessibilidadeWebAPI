@@ -63,22 +63,48 @@ namespace AcessibilidadeWebAPI.Mapeador
         private void AddAvaliacaoLocal()
         {
             CreateMap<AvaliacaoLocal, AvaliacaoLocalDto>();
-            CreateMap<InserirAvaliacaoLocalRequisicao, AvaliacaoLocal>();
+            CreateMap<InserirAvaliacaoLocalRequisicao, AvaliacaoLocal>()
+                .ForMember(dest => dest.LocalId, destinationMember => destinationMember.MapFrom(src => src.IdLocal))
+                .ForMember(dest => dest.Acessivel, destinationMember => destinationMember.MapFrom(src => src.Acessivel))
+                .ForMember(dest => dest.Observacoes, destinationMember => destinationMember.MapFrom(src => src.Observacao))
+                .ForMember(dest => dest.Timestamp, destinationMember => destinationMember.MapFrom(src => DateTime.Now));
+
             CreateMap<EditarAvaliacaoLocalRequisicao, AvaliacaoLocal>();
         }
 
         private void AddSolicitacaoAjuda()
         {
             CreateMap<SolicitacaoAjuda, SolicitacaoAjudaDto>();
-            CreateMap<InserirSolicitacaoAjudaRequisicao, SolicitacaoAjuda>();
+            CreateMap<InserirSolicitacaoAjudaRequisicao, SolicitacaoAjuda>()
+                .ForMember(dest => dest.Descricao, destinationMember => destinationMember.MapFrom(src => src.Descricao))
+                .ForMember(dest => dest.Status, destinationMember => destinationMember.MapFrom(src => StatusSolicitacao.Pendente))
+                .ForMember(dest => dest.DataSolicitacao, destinationMember => destinationMember.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.Latitude, destinationMember => destinationMember.MapFrom(src => src.Latitude))
+                .ForMember(dest => dest.Longitude, destinationMember => destinationMember.MapFrom(src => src.Longitude))
+                .ForMember(dest => dest.EnderecoReferencia, destinationMember => destinationMember.MapFrom(src => src.EnderecoReferencia))
+                .ForMember(dest => dest.DeficienteUsuarioId, destinationMember => destinationMember.MapFrom(src => src.IdUsuario));
             CreateMap<EditarSolicitacaoAjudaRequisicao, SolicitacaoAjuda>();
         }
 
         private void AddAssistencia()
         {
-            CreateMap<Assistencia, AssistenciaDto>();
-            CreateMap<InserirAssistenciaRequisicao, Assistencia>();
-            CreateMap<EditarAssistenciaRequisicao, Assistencia>();
+            CreateMap<Assistencia, AssistenciaDto>()
+                .ForMember(dest => dest.IdAssistencia, destinationMember => destinationMember.MapFrom(src => src.IdAssistencia))
+                .ForMember(dest => dest.IdSolicitacaoAjuda, destinationMember => destinationMember.MapFrom(src => src.SolicitacaoAjudaId))
+                .ForMember(dest => dest.IdUsuario, destinationMember => destinationMember.MapFrom(src => src.VoluntarioUsuarioId))
+                .ForMember(dest => dest.DataAceite, destinationMember => destinationMember.MapFrom(src => src.DataAceite))
+                .ForMember(dest => dest.DataConclusao, destinationMember => destinationMember.MapFrom(src => src.DataConclusao));
+            CreateMap<InserirAssistenciaRequisicao, Assistencia>()
+                .ForMember(dest => dest.SolicitacaoAjudaId, destinationMember => destinationMember.MapFrom(src => src.IdSolicitacaoAjuda))
+                .ForMember(dest => dest.VoluntarioUsuarioId, destinationMember => destinationMember.MapFrom(src => src.IdUsuario))
+                .ForMember(dest => dest.DataAceite, destinationMember => destinationMember.MapFrom(src => src.DataAceite))
+                .ForMember(dest => dest.DataConclusao, destinationMember => destinationMember.MapFrom(src => src.DataConclusao));
+            CreateMap<EditarAssistenciaRequisicao, Assistencia>()
+                .ForMember(dest => dest.IdAssistencia, destinationMember => destinationMember.MapFrom(src => src.IdAssistencia))
+                .ForMember(dest => dest.SolicitacaoAjudaId, destinationMember => destinationMember.MapFrom(src => src.IdSolicitacaoAjuda))
+                .ForMember(dest => dest.VoluntarioUsuarioId, destinationMember => destinationMember.MapFrom(src => src.IdUsuario))
+                .ForMember(dest => dest.DataAceite, destinationMember => destinationMember.MapFrom(src => src.DataAceite))
+                .ForMember(dest => dest.DataConclusao, destinationMember => destinationMember.MapFrom(src => src.DataConclusao));
         }
 
         private void AddAuth()
