@@ -1,12 +1,12 @@
-﻿using AcessibilidadeWebAPI.Models.SolicitacaoAjudas;
-using AcessibilidadeWebAPI.Models.Assistencias;
+﻿using AcessibilidadeWebAPI.Models.Assistencias;
 using AcessibilidadeWebAPI.Models.Auth;
-using AcessibilidadeWebAPI.Requisicoes.SolicitacaoAjudas;
+using AcessibilidadeWebAPI.Models.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Requisicoes.Assistencias;
-using AcessibilidadeWebAPI.Resultados.SolicitacaoAjudas;
+using AcessibilidadeWebAPI.Requisicoes.SolicitacaoAjudas;
 using AcessibilidadeWebAPI.Resultados.Assistencias;
-using Microsoft.AspNetCore.Mvc;
+using AcessibilidadeWebAPI.Resultados.SolicitacaoAjudas;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace AcessibilidadeWebAPI.Controllers
@@ -167,13 +167,13 @@ namespace AcessibilidadeWebAPI.Controllers
 
                 // Filtrar apenas as pendentes e calcular distâncias
                 var solicitacoesComDistancia = resultado.ArrSolicitacaoAjuda
-                    .Where(s => s.Status == 1) // StatusSolicitacao.Pendente
+                    .Where(s => (int)s.Status == 1) // StatusSolicitacao.Pendente
                     .Select(s => new SolicitacaoComDistancia
                     {
                         IdSolicitacaoAjuda = s.IdSolicitacaoAjuda,
-                        DeficienteUsuarioId = s.IdUsuario,
+                        DeficienteUsuarioId = s.DeficienteUsuarioId,
                         Descricao = s.Descricao,
-                        DataSolicitacao = s.DataSolicitacao.DateTime,
+                        DataSolicitacao = s.DataSolicitacao,
                         Latitude = null, // Será atualizado quando o DTO for corrigido
                         Longitude = null, // Será atualizado quando o DTO for corrigido
                         EnderecoReferencia = null, // Será atualizado quando o DTO for corrigido
